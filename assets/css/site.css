@@ -148,3 +148,17 @@
 .upcoming-live-actions .button-outline{border:1px solid #ffffff70;color:#fff;background:transparent}
 @media(max-width:850px){.upcoming-live-main{align-items:stretch;flex-direction:column}.upcoming-live-countdown{width:100%;min-width:0}}
 @media(max-width:520px){.upcoming-live-card{padding:20px}.upcoming-live-top{align-items:flex-start}.upcoming-live-kicker{font-size:8px}.upcoming-live-actions{align-items:stretch;flex-direction:column}.upcoming-live-actions .button{justify-content:center;width:100%}.upcoming-live-clock strong{font-size:26px}}
+
+/* Episode library video thumbnails */
+.episode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;align-items:stretch}
+.episode-card{overflow:hidden;padding:0;display:flex;flex-direction:column;gap:0}
+.episode-thumbnail-link{display:block;overflow:hidden;background:#14221a;aspect-ratio:16/9}
+.episode-thumbnail{display:block;width:100%;height:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .3s ease}
+.episode-thumbnail-link:hover .episode-thumbnail{transform:scale(1.035)}
+.episode-thumbnail-placeholder{display:grid;place-items:center;min-height:150px;color:#d2aa6b;font-size:12px;font-weight:800;letter-spacing:.18em;background:radial-gradient(ellipse at center,#35483a,#14221a 72%)}
+.episode-card>.eyebrow,.episode-card>h2,.episode-card>p:not(.eyebrow),.episode-card>.button{margin-left:20px;margin-right:20px}
+.episode-card>.eyebrow{margin-top:20px;margin-bottom:8px}
+.episode-card>h2{font-size:23px;margin-top:0;margin-bottom:10px}
+.episode-card>p:not(.eyebrow){font-size:13px;color:#667066;flex:1}
+.episode-card>.button{align-self:flex-start;margin-top:8px;margin-bottom:20px}
+@media(max-width:600px){.episode-grid{grid-template-columns:1fr}}

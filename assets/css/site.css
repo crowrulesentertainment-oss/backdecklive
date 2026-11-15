@@ -80,3 +80,13 @@
 .live-community-card{background:#e9e7de}
 @media(max-width:850px){.live-layout{grid-template-columns:1fr}.live-sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.live-status-panel{align-items:flex-start;flex-direction:column}.live-sidebar{grid-template-columns:1fr}.live-replay-meta{align-items:flex-start;flex-direction:column}.live-hero-actions .button{width:100%;justify-content:center}}
+
+
+/* YouTube API live status and active broadcast player */
+.youtube-live-panel{margin:0 0 34px;padding:24px;background:#fffdf8;border:1px solid #ded9cb;border-radius:16px}
+.youtube-live-panel>p{color:#687268;line-height:1.7}
+.youtube-live-panel .button{display:inline-flex;margin-top:12px}
+.youtube-live-player{margin:18px 0}
+.youtube-live-player[hidden]{display:none}
+.youtube-live-player iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+@media(max-width:600px){.youtube-live-panel{padding:18px}.youtube-live-panel .live-section-heading{align-items:flex-start;flex-direction:column}.youtube-live-panel .live-schedule{white-space:normal}}

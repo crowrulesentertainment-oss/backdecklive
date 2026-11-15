@@ -139,13 +139,14 @@ document.addEventListener("DOMContentLoaded",()=>{
   };
   if(liveStatusPlayer){
    const frame=document.createElement("iframe");
-   frame.src="https://www.youtube-nocookie.com/embed/live_stream?channel="+encodeURIComponent(YOUTUBE_CHANNEL_ID)+"&rel=0&modestbranding=1";
+   frame.src="https://www.youtube-nocookie.com/embed/zLQ5Zs1_z6U?rel=0&modestbranding=1";
    frame.title="Back Deck Live — CrowRules TV live stream";
    frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
    frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
    frame.allowFullscreen=true;
    liveStatusPlayer.replaceChildren(frame);
    liveStatusPlayer.hidden=false;
+   showLiveVideoAndChat("zLQ5Zs1_z6U");
   }
   if(liveConnectForm){
    liveConnectForm.addEventListener("submit",event=>{

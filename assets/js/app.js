@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded",()=>{
  // Supabase browser client: publishable key only. RLS remains the security boundary.
  const SUPABASE_URL="https://cevylpnoexugwgygvtgu.supabase.co";
  const SUPABASE_PUBLISHABLE_KEY="sb_publishable_AdfM5y6RqvF3tbvEVzDZSg_JuGTQLD-";
+ const BACK_DECK_LIVE_API="https://cevylpnoexugwgygvtgu.supabase.co/functions/v1/back-deck-live-api";
+ const YOUTUBE_CHANNEL_ID="UC03D_GFGP1NqtnXwt1uXusA";
+ const YOUTUBE_CHANNEL_URL="https://www.youtube.com/@CrowRules_TV";
  const db=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY):null;
 
  // Live page: publish anonymous page presence so the admin dashboard can see active visitors.
@@ -88,45 +91,56 @@ document.addEventListener("DOMContentLoaded",()=>{
   };
   loadLiveEpisode();
 
-  // YouTube live status is generated server-side by GitHub Actions; no API key ships to visitors.
+  // Reuse the already-configured Back Deck Live API and CrowRules TV channel.
+  // The API's YouTube credentials remain in the existing Supabase Edge Function secrets.
   const liveStatusMessage=document.querySelector("[data-youtube-live-message]");
   const liveStatusPlayer=document.querySelector("[data-youtube-live-player]");
   const liveStatusTitle=document.querySelector("[data-youtube-live-title]");
   const liveStatusLink=document.querySelector("[data-youtube-live-link]");
-  const loadYouTubeLiveStatus=async()=>{
+  const subscriberCount=document.querySelector("[data-youtube-subscriber-count]");
+  const subscriberGoal=document.querySelector("[data-youtube-subscriber-goal]");
+  const subscriberProgress=document.querySelector("[data-youtube-subscriber-progress]");
+  const subscriberMessage=document.querySelector("[data-youtube-subscriber-message]");
+  if(liveStatusLink)liveStatusLink.href=YOUTUBE_CHANNEL_URL+"/streams";
+  if(liveStatusPlayer){
+   const frame=document.createElement("iframe");
+   frame.src="https://www.youtube-nocookie.com/embed/live_stream?channel="+encodeURIComponent(YOUTUBE_CHANNEL_ID)+"&rel=0&modestbranding=1";
+   frame.title="Back Deck Live — CrowRules TV live stream";
+   frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
+   frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+   frame.allowFullscreen=true;
+   liveStatusPlayer.replaceChildren(frame);
+   liveStatusPlayer.hidden=false;
+  }
+  if(liveStatusTitle)liveStatusTitle.textContent="Back Deck Live — CrowRules TV";
+  if(liveStatusMessage)liveStatusMessage.textContent="Live channel player connected. When a broadcast is active, it will appear here.";
+  const loadYouTubeSubscriberStats=async()=>{
+   if(!subscriberCount)return;
    try{
-    const response=await fetch("./live-status.json?ts="+Date.now(),{cache:"no-store"});
-    if(!response.ok)throw new Error("Live status file unavailable");
-    const status=await response.json();
-    if(liveStatusLink&&status.channelUrl)liveStatusLink.href=status.channelUrl;
-    if(status.setupRequired){
-     if(liveStatusMessage)liveStatusMessage.textContent="YouTube API setup is almost ready. Add the YOUTUBE_API_KEY repository secret and run the GitHub Actions workflow.";
+    const response=await fetch(BACK_DECK_LIVE_API+"?action=subscribers",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok||data.ok===false||data.success===false)throw new Error(data.error||data.message||"YouTube statistics request failed.");
+    const count=Number(data.subscriberCount??data.subscriber_count??data.subscribers);
+    const goalValue=Number(data.goal??data.subscriberGoal??1000);
+    const goal=Number.isFinite(goalValue)&&goalValue>0?goalValue:1000;
+    if(subscriberGoal)subscriberGoal.textContent=goal.toLocaleString("en-US");
+    if(!Number.isFinite(count)||count<0){
+     subscriberCount.textContent="—";
+     if(subscriberMessage)subscriberMessage.textContent=data.hidden?"Subscriber totals are hidden for this channel.":"The YouTube API did not return a subscriber count.";
+     if(subscriberProgress)subscriberProgress.style.width="0%";
      return;
     }
-    if(status.isLive&&status.videoId&&/^[A-Za-z0-9_-]{11}$/.test(status.videoId)){
-     if(liveStatusMessage)liveStatusMessage.textContent="We're live now on YouTube. Join the broadcast below.";
-     if(liveStatusTitle)liveStatusTitle.textContent=status.title||"Back Deck Live — Broadcasting now";
-     if(liveStatusPlayer){
-      const frame=document.createElement("iframe");
-      frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(status.videoId)+"?rel=0";
-      frame.title=status.title||"Back Deck Live — Live broadcast";
-      frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
-      frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      frame.allowFullscreen=true;
-      liveStatusPlayer.replaceChildren(frame);
-      liveStatusPlayer.hidden=false;
-     }
-    }else if(liveStatusMessage){
-     const checked=status.checkedAt?new Date(status.checkedAt).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}):"";
-     liveStatusMessage.textContent="No active public livestream is showing right now."+(checked?" Last checked "+checked+".":"")+" Check back at our next scheduled broadcast.";
-    }
+    subscriberCount.textContent=count.toLocaleString("en-US");
+    if(subscriberProgress)subscriberProgress.style.width=Math.min(100,count/goal*100)+"%";
+    if(subscriberMessage)subscriberMessage.textContent=data.hidden?"Subscriber totals are hidden for this channel.":"Live channel statistics supplied by the existing Back Deck Live API.";
    }catch(error){
-    console.warn("Back Deck Live YouTube status unavailable:",error.message);
-    if(liveStatusMessage)liveStatusMessage.textContent="Live status is temporarily unavailable. You can still check the CrowRules TV YouTube channel.";
+    console.warn("Back Deck Live YouTube subscriber stats unavailable:",error.message);
+    subscriberCount.textContent="—";
+    if(subscriberMessage)subscriberMessage.textContent="YouTube statistics are temporarily unavailable. The live channel player remains available.";
    }
   };
-  loadYouTubeLiveStatus();
-  window.setInterval(loadYouTubeLiveStatus,5*60*1000);
+  loadYouTubeSubscriberStats();
+  window.setInterval(loadYouTubeSubscriberStats,15*60*1000);
  }
 
  const makePlayer=(videoId,title)=>{

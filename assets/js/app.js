@@ -111,8 +111,8 @@ document.addEventListener("DOMContentLoaded",()=>{
    try{
     const url=new URL(String(value||"").trim());
     let id=url.searchParams.get("v");
-    if(!id&&/(^|\\.)youtu\\.be$/i.test(url.hostname))id=url.pathname.split("/").filter(Boolean)[0];
-    if(!id&&/youtube\\.com$/i.test(url.hostname))id=url.pathname.split("/").filter(Boolean).find((part,index,parts)=>["live","embed","shorts"].includes(parts[index-1]));
+    if(!id&&url.hostname.toLowerCase()==="youtu.be")id=url.pathname.split("/").filter(Boolean)[0];
+    if(!id&&(url.hostname.toLowerCase()==="youtube.com"||url.hostname.toLowerCase().endsWith(".youtube.com")))id=url.pathname.split("/").filter(Boolean).find((part,index,parts)=>["live","embed","shorts"].includes(parts[index-1]));
     return id&&/^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
    }catch{return "";}
   };

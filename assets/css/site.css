@@ -90,3 +90,12 @@
 .youtube-live-player[hidden]{display:none}
 .youtube-live-player iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
 @media(max-width:600px){.youtube-live-panel{padding:18px}.youtube-live-panel .live-section-heading{align-items:flex-start;flex-direction:column}.youtube-live-panel .live-schedule{white-space:normal}}
+
+/* Existing CrowRules TV API subscriber statistics */
+.youtube-subscriber-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:24px;padding-top:20px;border-top:1px solid #ded9cb}
+.youtube-subscriber-stats>div:not(.youtube-subscriber-track){display:flex;flex-direction:column;gap:3px}
+.youtube-subscriber-stats strong{font-size:25px;color:#26382c;font-variant-numeric:tabular-nums}
+.youtube-subscriber-stats span{font-size:12px;color:#687268}
+.youtube-subscriber-track{grid-column:1/-1;height:8px;border-radius:99px;background:#e5e1d6;overflow:hidden}
+.youtube-subscriber-track span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#789a73,#d5ad70);transition:width .3s ease}
+.youtube-subscriber-stats p{grid-column:1/-1;margin:0;color:#687268;font-size:12px}

@@ -122,3 +122,29 @@
 .youtube-live-connect>p{margin:8px 0 0;color:#687268;font-size:11px;line-height:1.5}
 @media(max-width:900px){.youtube-live-stage{grid-template-columns:1fr}.youtube-chat-frame,.youtube-chat-frame iframe,.youtube-chat-empty{min-height:500px}}
 @media(max-width:520px){.youtube-live-connect-row{flex-direction:column}.youtube-live-connect .button{width:100%;justify-content:center}.youtube-chat-frame,.youtube-chat-frame iframe,.youtube-chat-empty{min-height:440px}}
+
+/* Upcoming Back Deck Live show card and live countdown */
+.upcoming-live-card{position:relative;overflow:hidden;margin:0 0 30px;padding:clamp(22px,3.5vw,38px);border:1px solid #4c624f;border-radius:18px;color:#f7f3e9;background:radial-gradient(ellipse at 90% 0%,#49614b 0%,transparent 42%),linear-gradient(120deg,#14251a,#263d2d 68%,#1a2b20);box-shadow:0 20px 55px #17231d20}
+.upcoming-live-top,.upcoming-live-main,.upcoming-live-actions{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.upcoming-live-kicker{display:flex;align-items:center;gap:9px;color:#e2c18d;font-size:10px;font-weight:800;letter-spacing:.18em}
+.upcoming-live-pulse{width:8px;height:8px;border-radius:50%;background:#d6b476;box-shadow:0 0 0 5px #d6b47622}
+.upcoming-live-state{padding:7px 12px;border:1px solid #e0c28c66;border-radius:30px;color:#f0d6a7;font-size:9px;font-weight:800;letter-spacing:.14em}
+.upcoming-live-state.is-live{background:#8e3d32;border-color:#c66d5d;color:#fff}
+.upcoming-live-main{align-items:flex-end;margin:28px 0 24px}
+.upcoming-live-main>div:first-child{max-width:560px}
+.upcoming-live-main .eyebrow{color:#d9b77e}
+.upcoming-live-main h2{margin:7px 0 10px;color:#fff;font:700 clamp(27px,3.3vw,42px)/1.12 'Playfair Display',Georgia,serif}
+.upcoming-live-date{margin:0 0 10px;color:#f1d6a4;font-size:18px;font-weight:700}
+.upcoming-live-description{max-width:500px;margin:0;color:#d4dbd0;font-size:13px;line-height:1.7}
+.upcoming-live-countdown{min-width:310px;padding:16px 18px;border:1px solid #ffffff26;border-radius:13px;background:#0d1b1280}
+.upcoming-live-countdown>span{color:#d9bd8b;font-size:8px;font-weight:800;letter-spacing:.15em}
+.upcoming-live-clock{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0 8px}
+.upcoming-live-clock>div{display:flex;flex-direction:column;align-items:center;border-right:1px solid #ffffff20}
+.upcoming-live-clock>div:last-child{border:0}
+.upcoming-live-clock strong{color:#fff;font:700 clamp(23px,3vw,34px)/1.1 'Playfair Display',Georgia,serif;font-variant-numeric:tabular-nums}
+.upcoming-live-clock small{margin-top:5px;color:#cbd1c6;font-size:7px;letter-spacing:.12em}
+.upcoming-live-countdown>p{margin:0;color:#cbd1c6;text-align:center;font-size:10px}
+.upcoming-live-actions{justify-content:flex-start;flex-wrap:wrap}
+.upcoming-live-actions .button-outline{border:1px solid #ffffff70;color:#fff;background:transparent}
+@media(max-width:850px){.upcoming-live-main{align-items:stretch;flex-direction:column}.upcoming-live-countdown{width:100%;min-width:0}}
+@media(max-width:520px){.upcoming-live-card{padding:20px}.upcoming-live-top{align-items:flex-start}.upcoming-live-kicker{font-size:8px}.upcoming-live-actions{align-items:stretch;flex-direction:column}.upcoming-live-actions .button{justify-content:center;width:100%}.upcoming-live-clock strong{font-size:26px}}

@@ -39,3 +39,8 @@
 .episode-grid .content-card{margin:0}
 .episode-card h2{font-size:25px!important}
 @media(max-width:640px){.episode-grid{grid-template-columns:1fr}}
+
+/* Sitewide link to the authenticated Back Deck Live admin workspace */
+.main-nav .nav-admin{border:1px solid rgba(213,173,112,.55);border-radius:30px;padding:9px 15px;color:#d5ad70;font-weight:700}
+.main-nav .nav-admin:hover{background:rgba(213,173,112,.12);color:#f0d4a5}
+@media(max-width:900px){.main-nav .nav-admin{display:inline-flex;justify-content:center;margin-top:5px}}

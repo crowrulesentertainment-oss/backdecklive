@@ -87,6 +87,46 @@ document.addEventListener("DOMContentLoaded",()=>{
    }
   };
   loadLiveEpisode();
+
+  // YouTube live status is generated server-side by GitHub Actions; no API key ships to visitors.
+  const liveStatusMessage=document.querySelector("[data-youtube-live-message]");
+  const liveStatusPlayer=document.querySelector("[data-youtube-live-player]");
+  const liveStatusTitle=document.querySelector("[data-youtube-live-title]");
+  const liveStatusLink=document.querySelector("[data-youtube-live-link]");
+  const loadYouTubeLiveStatus=async()=>{
+   try{
+    const response=await fetch("./live-status.json?ts="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("Live status file unavailable");
+    const status=await response.json();
+    if(liveStatusLink&&status.channelUrl)liveStatusLink.href=status.channelUrl;
+    if(status.setupRequired){
+     if(liveStatusMessage)liveStatusMessage.textContent="YouTube API setup is almost ready. Add the YOUTUBE_API_KEY repository secret and run the GitHub Actions workflow.";
+     return;
+    }
+    if(status.isLive&&status.videoId&&/^[A-Za-z0-9_-]{11}$/.test(status.videoId)){
+     if(liveStatusMessage)liveStatusMessage.textContent="We're live now on YouTube. Join the broadcast below.";
+     if(liveStatusTitle)liveStatusTitle.textContent=status.title||"Back Deck Live — Broadcasting now";
+     if(liveStatusPlayer){
+      const frame=document.createElement("iframe");
+      frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(status.videoId)+"?rel=0";
+      frame.title=status.title||"Back Deck Live — Live broadcast";
+      frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
+      frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      frame.allowFullscreen=true;
+      liveStatusPlayer.replaceChildren(frame);
+      liveStatusPlayer.hidden=false;
+     }
+    }else if(liveStatusMessage){
+     const checked=status.checkedAt?new Date(status.checkedAt).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}):"";
+     liveStatusMessage.textContent="No active public livestream is showing right now."+(checked?" Last checked "+checked+".":"")+" Check back at our next scheduled broadcast.";
+    }
+   }catch(error){
+    console.warn("Back Deck Live YouTube status unavailable:",error.message);
+    if(liveStatusMessage)liveStatusMessage.textContent="Live status is temporarily unavailable. You can still check the CrowRules TV YouTube channel.";
+   }
+  };
+  loadYouTubeLiveStatus();
+  window.setInterval(loadYouTubeLiveStatus,5*60*1000);
  }
 
  const makePlayer=(videoId,title)=>{

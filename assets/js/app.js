@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(website){say("Thanks — your message has been received.");return;}
   const name=String(values.get("name")||"").trim();
   const email=String(values.get("email")||"").trim();
-  let submissionType=String(form.dataset.submissionType||"Topic idea");
+  let submissionType=String(values.get("submission_type")||form.dataset.submissionType||"Topic idea");
   let message=String(values.get("message")||"").trim();
   if(form.dataset.formKind==="guest"){
    const location=String(values.get("location")||"").trim();

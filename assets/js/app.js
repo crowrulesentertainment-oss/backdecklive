@@ -216,9 +216,9 @@ document.addEventListener("DOMContentLoaded",()=>{
      if(liveStatusTitle)liveStatusTitle.textContent=data.title||"Back Deck Live — CrowRules TV";
      if(liveStatusMessage)liveStatusMessage.textContent="An active CrowRules TV broadcast was found automatically. The video and matching live chat are connected.";
      if(liveChatStatus)liveChatStatus.textContent="Active broadcast detected automatically — video and live chat are synced.";
+    }else if(!discoveredLiveVideoId){
      if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}
      if(upcomingNodes.description)upcomingNodes.description.textContent="Join us every Saturday for conversation, community, and a little time on the deck.";
-    }else if(!discoveredLiveVideoId){
      if(liveStatusMessage)liveStatusMessage.textContent="No active public live broadcast is detected right now. This player will connect automatically when Back Deck Live goes live.";
      if(liveChatStatus)liveChatStatus.textContent="Waiting for the next live broadcast. Video and chat will connect automatically.";
     }else{

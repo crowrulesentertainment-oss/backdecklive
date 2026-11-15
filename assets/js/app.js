@@ -161,6 +161,33 @@ document.addEventListener("DOMContentLoaded",()=>{
    const queryVideo=params.get("video")||params.get("v");
    if(queryVideo&&/^[A-Za-z0-9_-]{11}$/.test(queryVideo))showLiveVideoAndChat(queryVideo);
   }
+  let discoveredLiveVideoId="";
+  const discoverActiveYouTubeLive=async()=>{
+   try{
+    const response=await fetch(BACK_DECK_LIVE_API+"?action=youtube-live",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok||data.ok===false)throw new Error(data.error||"Live broadcast lookup failed.");
+    if(data.live&&data.videoId&&/^[A-Za-z0-9_-]{11}$/.test(data.videoId)){
+     if(discoveredLiveVideoId!==data.videoId){discoveredLiveVideoId=data.videoId;showLiveVideoAndChat(data.videoId);}
+     if(liveStatusTitle)liveStatusTitle.textContent=data.title||"Back Deck Live — CrowRules TV";
+     if(liveStatusMessage)liveStatusMessage.textContent="An active CrowRules TV broadcast was found automatically. The video and matching live chat are connected.";
+     if(liveChatStatus)liveChatStatus.textContent="Active broadcast detected automatically — video and live chat are synced.";
+    }else if(!discoveredLiveVideoId){
+     if(liveStatusMessage)liveStatusMessage.textContent="No active public live broadcast is detected right now. This player will connect automatically when Back Deck Live goes live.";
+     if(liveChatStatus)liveChatStatus.textContent="Waiting for the next live broadcast. Video and chat will connect automatically.";
+    }else{
+     discoveredLiveVideoId="";
+     if(liveStatusTitle)liveStatusTitle.textContent="Back Deck Live — CrowRules TV";
+     if(liveStatusMessage)liveStatusMessage.textContent="The previous broadcast has ended. Waiting for the next live show.";
+     if(liveChat){const empty=document.createElement("div");empty.className="youtube-chat-empty";const heading=document.createElement("strong");heading.textContent="Chat is ready when the show goes live.";const note=document.createElement("p");note.textContent="The next active broadcast and its chat will connect automatically.";empty.append(heading,note);liveChat.replaceChildren(empty);}
+    }
+   }catch(error){
+    console.warn("Back Deck Live active broadcast discovery unavailable:",error.message);
+    if(liveChatStatus&&!discoveredLiveVideoId)liveChatStatus.textContent="Automatic live detection is temporarily unavailable. The channel player remains available.";
+   }
+  };
+  discoverActiveYouTubeLive();
+  window.setInterval(discoverActiveYouTubeLive,60*1000);
   if(liveStatusTitle)liveStatusTitle.textContent="Back Deck Live — CrowRules TV";
   if(liveStatusMessage)liveStatusMessage.textContent="Live channel player connected. When a broadcast is active, it will appear here.";
   const loadYouTubeSubscriberStats=async()=>{

@@ -32,3 +32,10 @@
 @media(max-width:800px){.site-header{height:78px}.main-nav{top:78px}.hero{min-height:760px}.hero-content{padding:70px 25px}.hero-scroll{display:none}.section-wrap{padding-block:70px}}
 @media(max-width:520px){.hero{min-height:790px}.hero h1{font-size:clamp(48px,13vw,62px)}.hero-countdown{padding:16px 12px}.countdown-heading{font-size:8px;gap:6px}.countdown-schedule{font-size:7px}.countdown-grid{gap:4px}.countdown-grid strong{font-size:30px}.countdown-grid span{font-size:7px}.broadcast-note{font-size:9px;flex-wrap:wrap}.hero-content{padding-top:56px}.schedule-box{padding:30px 24px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* Supabase-powered media and episode listings */
+.video-shell iframe{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:12px;background:#101713}
+.episode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0}
+.episode-grid .content-card{margin:0}
+.episode-card h2{font-size:25px!important}
+@media(max-width:640px){.episode-grid{grid-template-columns:1fr}}

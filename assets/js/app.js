@@ -102,6 +102,41 @@ document.addEventListener("DOMContentLoaded",()=>{
   const subscriberProgress=document.querySelector("[data-youtube-subscriber-progress]");
   const subscriberMessage=document.querySelector("[data-youtube-subscriber-message]");
   if(liveStatusLink)liveStatusLink.href=YOUTUBE_CHANNEL_URL+"/streams";
+  const liveChat=document.querySelector("[data-youtube-live-chat]");
+  const liveConnectForm=document.querySelector("[data-youtube-live-connect]");
+  const liveChatStatus=document.querySelector("[data-youtube-chat-status]");
+  const liveUrlInput=document.querySelector("#youtube-live-url");
+  const siteHost=window.location.hostname;
+  const videoIdFromUrl=value=>{
+   try{
+    const url=new URL(String(value||"").trim());
+    let id=url.searchParams.get("v");
+    if(!id&&/(^|\\.)youtu\\.be$/i.test(url.hostname))id=url.pathname.split("/").filter(Boolean)[0];
+    if(!id&&/youtube\\.com$/i.test(url.hostname))id=url.pathname.split("/").filter(Boolean).find((part,index,parts)=>["live","embed","shorts"].includes(parts[index-1]));
+    return id&&/^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
+   }catch{return "";}
+  };
+  const showLiveVideoAndChat=id=>{
+   if(!id)return false;
+   if(liveStatusPlayer){
+    const frame=document.createElement("iframe");
+    frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?rel=0&modestbranding=1";
+    frame.title="Back Deck Live — CrowRules TV live broadcast";
+    frame.loading="eager";frame.referrerPolicy="strict-origin-when-cross-origin";
+    frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    frame.allowFullscreen=true;liveStatusPlayer.replaceChildren(frame);
+   }
+   if(liveChat){
+    const chat=document.createElement("iframe");
+    chat.src="https://www.youtube.com/live_chat?v="+encodeURIComponent(id)+"&embed_domain="+encodeURIComponent(siteHost)+"&dark_theme=1";
+    chat.title="Back Deck Live YouTube live chat";
+    chat.loading="eager";chat.referrerPolicy="strict-origin-when-cross-origin";
+    chat.allow="clipboard-write";liveChat.replaceChildren(chat);
+   }
+   if(liveUrlInput)liveUrlInput.value="https://www.youtube.com/watch?v="+id;
+   if(liveChatStatus)liveChatStatus.textContent="The broadcast video and matching YouTube live chat are connected.";
+   return true;
+  };
   if(liveStatusPlayer){
    const frame=document.createElement("iframe");
    frame.src="https://www.youtube-nocookie.com/embed/live_stream?channel="+encodeURIComponent(YOUTUBE_CHANNEL_ID)+"&rel=0&modestbranding=1";
@@ -111,6 +146,20 @@ document.addEventListener("DOMContentLoaded",()=>{
    frame.allowFullscreen=true;
    liveStatusPlayer.replaceChildren(frame);
    liveStatusPlayer.hidden=false;
+  }
+  if(liveConnectForm){
+   liveConnectForm.addEventListener("submit",event=>{
+    event.preventDefault();
+    const id=videoIdFromUrl(liveUrlInput?.value);
+    if(!id){
+     if(liveChatStatus)liveChatStatus.textContent="That link doesn’t look like a YouTube video or live broadcast URL. Paste the full YouTube watch link.";
+     return;
+    }
+    showLiveVideoAndChat(id);
+   });
+   const params=new URLSearchParams(window.location.search);
+   const queryVideo=params.get("video")||params.get("v");
+   if(queryVideo&&/^[A-Za-z0-9_-]{11}$/.test(queryVideo))showLiveVideoAndChat(queryVideo);
   }
   if(liveStatusTitle)liveStatusTitle.textContent="Back Deck Live — CrowRules TV";
   if(liveStatusMessage)liveStatusMessage.textContent="Live channel player connected. When a broadcast is active, it will appear here.";

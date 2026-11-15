@@ -99,3 +99,26 @@
 .youtube-subscriber-track{grid-column:1/-1;height:8px;border-radius:99px;background:#e5e1d6;overflow:hidden}
 .youtube-subscriber-track span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#789a73,#d5ad70);transition:width .3s ease}
 .youtube-subscriber-stats p{grid-column:1/-1;margin:0;color:#687268;font-size:12px}
+
+
+/* Synchronized YouTube live player and chat layout */
+.youtube-live-stage{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.85fr);gap:18px;align-items:stretch;margin:18px 0}
+.youtube-live-stage>div:first-child{min-width:0}
+.youtube-chat-card{min-width:0;overflow:hidden;border:1px solid #ded9cb;border-radius:14px;background:#101713;color:#f6f1e7;display:flex;flex-direction:column;min-height:100%}
+.youtube-chat-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid #344238}
+.youtube-chat-heading .eyebrow{margin:0;color:#d5ad70;font-size:10px;letter-spacing:.14em}
+.youtube-chat-heading h3{margin:5px 0 0;color:#fff;font-size:20px}
+.youtube-chat-heading>span{padding:5px 10px;border-radius:30px;background:#713b32;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.youtube-chat-frame{flex:1;min-height:420px;background:#121a15}
+.youtube-chat-frame iframe{display:block;width:100%;height:100%;min-height:420px;border:0}
+.youtube-chat-empty{min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:26px;text-align:center;color:#f6f1e7}
+.youtube-chat-empty p{max-width:260px;margin:0;color:#c4cbbf;font-size:13px;line-height:1.6}
+.youtube-chat-empty a{color:#e4c38c;font-weight:700}
+.youtube-live-connect{margin-top:12px;padding:14px;border:1px solid #ded9cb;border-radius:12px;background:#f5f2e9}
+.youtube-live-connect label{display:block;margin-bottom:8px;color:#26382c;font-size:13px;font-weight:800}
+.youtube-live-connect-row{display:flex;gap:8px}
+.youtube-live-connect input{flex:1;min-width:0;padding:12px;border:1px solid #cfc9ba;border-radius:8px;background:#fff;color:#26382c;font:inherit;font-size:13px}
+.youtube-live-connect .button{margin:0;white-space:nowrap}
+.youtube-live-connect>p{margin:8px 0 0;color:#687268;font-size:11px;line-height:1.5}
+@media(max-width:900px){.youtube-live-stage{grid-template-columns:1fr}.youtube-chat-frame,.youtube-chat-frame iframe,.youtube-chat-empty{min-height:500px}}
+@media(max-width:520px){.youtube-live-connect-row{flex-direction:column}.youtube-live-connect .button{width:100%;justify-content:center}.youtube-chat-frame,.youtube-chat-frame iframe,.youtube-chat-empty{min-height:440px}}

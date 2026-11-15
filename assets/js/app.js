@@ -161,6 +161,48 @@ document.addEventListener("DOMContentLoaded",()=>{
    const queryVideo=params.get("video")||params.get("v");
    if(queryVideo&&/^[A-Za-z0-9_-]{11}$/.test(queryVideo))showLiveVideoAndChat(queryVideo);
   }
+  const upcomingNodes={
+   state:document.querySelector("[data-upcoming-live-state]"),
+   date:document.querySelector("[data-upcoming-live-date]"),
+   description:document.querySelector("[data-upcoming-live-description]"),
+   days:document.querySelector("[data-upcoming-days]"),
+   hours:document.querySelector("[data-upcoming-hours]"),
+   minutes:document.querySelector("[data-upcoming-minutes]"),
+   seconds:document.querySelector("[data-upcoming-seconds]"),
+   label:document.querySelector("[data-upcoming-live-countdown-label]"),
+   calendar:document.querySelector("[data-upcoming-calendar]")
+  };
+  const getNextBackDeckShow=()=>{
+   const zone="America/Los_Angeles";
+   const partsAt=date=>Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:zone,year:"numeric",month:"numeric",day:"numeric",weekday:"short",hour:"numeric",minute:"numeric",second:"numeric",hourCycle:"h23"}).formatToParts(date).map(part=>[part.type,part.value]));
+   const now=new Date(),parts=partsAt(now),weekday={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+   let days=(6-weekday[parts.weekday]+7)%7;
+   if(days===0&&(Number(parts.hour)>15||(Number(parts.hour)===15&&(Number(parts.minute)>0||Number(parts.second)>0))))days=7;
+   const calendarDay=new Date(Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day)+days));
+   const targetUtc=Date.UTC(calendarDay.getUTCFullYear(),calendarDay.getUTCMonth(),calendarDay.getUTCDate(),15,0,0);
+   const represented=partsAt(new Date(targetUtc));
+   const representedUtc=Date.UTC(Number(represented.year),Number(represented.month)-1,Number(represented.day),Number(represented.hour),Number(represented.minute),Number(represented.second));
+   return new Date(targetUtc-(representedUtc-targetUtc));
+  };
+  const updateUpcomingLive=()=>{
+   if(!upcomingNodes.days)return;
+   const now=new Date(),target=getNextBackDeckShow(),remaining=Math.max(0,target-now),total=Math.floor(remaining/1000);
+   const dateLabel=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"long",month:"long",day:"numeric"}).format(target);
+   const timeLabel=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(target);
+   upcomingNodes.date.textContent=dateLabel+" · "+timeLabel;
+   upcomingNodes.days.textContent=String(Math.floor(total/86400)).padStart(2,"0");
+   upcomingNodes.hours.textContent=String(Math.floor(total%86400/3600)).padStart(2,"0");
+   upcomingNodes.minutes.textContent=String(Math.floor(total%3600/60)).padStart(2,"0");
+   upcomingNodes.seconds.textContent=String(total%60).padStart(2,"0");
+   if(upcomingNodes.label)upcomingNodes.label.textContent=total===0?"Showtime!": "Until the next Saturday gathering.";
+   if(upcomingNodes.calendar){
+    const end=new Date(target.getTime()+60*60*1000);
+    const stamp=date=>new Intl.DateTimeFormat("en-CA",{timeZone:"UTC",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(date).replace(/[^0-9]/g,"").slice(0,12);
+    const params=new URLSearchParams({action:"TEMPLATE",text:"Back Deck Live — CrowRules TV",details:"Join Back Deck Live every Saturday at 3:00 PM Pacific on CrowRules TV.",dates:stamp(target)+"/"+stamp(end),ctz:"America/Los_Angeles",recur:"RRULE:FREQ=WEEKLY;BYDAY=SA"});
+    upcomingNodes.calendar.href="https://calendar.google.com/calendar/render?"+params.toString();
+   }
+  };
+  if(upcomingNodes.days){updateUpcomingLive();window.setInterval(updateUpcomingLive,1000);}
   let discoveredLiveVideoId="";
   const discoverActiveYouTubeLive=async()=>{
    try{
@@ -169,13 +211,19 @@ document.addEventListener("DOMContentLoaded",()=>{
     if(!response.ok||data.ok===false)throw new Error(data.error||"Live broadcast lookup failed.");
     if(data.live&&data.videoId&&/^[A-Za-z0-9_-]{11}$/.test(data.videoId)){
      if(discoveredLiveVideoId!==data.videoId){discoveredLiveVideoId=data.videoId;showLiveVideoAndChat(data.videoId);}
+     if(upcomingNodes.state){upcomingNodes.state.textContent="ON AIR NOW";upcomingNodes.state.classList.add("is-live");}
+     if(upcomingNodes.description)upcomingNodes.description.textContent="We're live right now — join the current broadcast and chat on CrowRules TV.";
      if(liveStatusTitle)liveStatusTitle.textContent=data.title||"Back Deck Live — CrowRules TV";
      if(liveStatusMessage)liveStatusMessage.textContent="An active CrowRules TV broadcast was found automatically. The video and matching live chat are connected.";
      if(liveChatStatus)liveChatStatus.textContent="Active broadcast detected automatically — video and live chat are synced.";
+     if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}
+     if(upcomingNodes.description)upcomingNodes.description.textContent="Join us every Saturday for conversation, community, and a little time on the deck.";
     }else if(!discoveredLiveVideoId){
      if(liveStatusMessage)liveStatusMessage.textContent="No active public live broadcast is detected right now. This player will connect automatically when Back Deck Live goes live.";
      if(liveChatStatus)liveChatStatus.textContent="Waiting for the next live broadcast. Video and chat will connect automatically.";
     }else{
+     if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}
+     if(upcomingNodes.description)upcomingNodes.description.textContent="The last broadcast has wrapped. Join us for the next Saturday gathering.";
      discoveredLiveVideoId="";
      if(liveStatusTitle)liveStatusTitle.textContent="Back Deck Live — CrowRules TV";
      if(liveStatusMessage)liveStatusMessage.textContent="The previous broadcast has ended. Waiting for the next live show.";

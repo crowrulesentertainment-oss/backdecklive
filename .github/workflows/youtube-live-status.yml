@@ -1,0 +1,42 @@
+name: Refresh YouTube Live status
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Search.list costs 100 quota units; 30-minute checks stay within the standard daily quota.
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube-live-status
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check YouTube for an active public livestream
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          YOUTUBE_CHANNEL_HANDLE: CrowRules_TV
+        run: node scripts/update-youtube-live-status.mjs
+      - name: Publish live status file
+        run: |
+          if git diff --quiet -- pages/live/live-status.json; then
+            echo "Live status has not changed; no commit needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pages/live/live-status.json
+          git commit -m "chore: refresh YouTube live status"
+          git push

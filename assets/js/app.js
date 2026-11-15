@@ -18,6 +18,77 @@ document.addEventListener("DOMContentLoaded",()=>{
  const SUPABASE_PUBLISHABLE_KEY="sb_publishable_AdfM5y6RqvF3tbvEVzDZSg_JuGTQLD-";
  const db=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY):null;
 
+ // Live page: publish anonymous page presence so the admin dashboard can see active visitors.
+ const liveAudience=document.querySelector("[data-live-audience]");
+ const liveConnection=document.querySelector("[data-live-connection]");
+ const liveConnectionDetail=document.querySelector("[data-live-connection-detail]");
+ const liveDot=document.querySelector("[data-live-connection-dot]");
+ let livePresenceChannel=null;
+ const renderLiveAudience=()=>{
+  if(!livePresenceChannel||!liveAudience)return;
+  const state=livePresenceChannel.presenceState();
+  const count=Object.values(state).reduce((total,sessions)=>total+(Array.isArray(sessions)?sessions.length:0),0);
+  liveAudience.textContent=String(count);
+ };
+ if(document.querySelector("[data-live-latest]")){
+  if(db){
+   livePresenceChannel=db.channel("back-deck-live-home-presence",{config:{presence:{key:(window.crypto&&crypto.randomUUID)?crypto.randomUUID():"visitor-"+Math.random().toString(36).slice(2)}}});
+   livePresenceChannel.on("presence",{event:"sync"},renderLiveAudience);
+   livePresenceChannel.subscribe(async status=>{
+    if(status==="SUBSCRIBED"){
+     await livePresenceChannel.track({online_at:new Date().toISOString(),page:"back-deck-live-watch"});
+     if(liveConnection)liveConnection.textContent="You're connected to the Back Deck Live community";
+     if(liveConnectionDetail)liveConnectionDetail.textContent="Live visitor presence is active.";
+     if(liveDot)liveDot.classList.add("connected");
+     renderLiveAudience();
+    }else if(["CHANNEL_ERROR","TIMED_OUT","CLOSED"].includes(status)){
+     if(liveConnection)liveConnection.textContent="Community connection temporarily unavailable";
+     if(liveConnectionDetail)liveConnectionDetail.textContent="The video and YouTube links remain available.";
+     if(liveAudience)liveAudience.textContent="—";
+     if(liveDot)liveDot.classList.remove("connected");
+    }
+   });
+   window.addEventListener("pagehide",()=>{if(livePresenceChannel)livePresenceChannel.untrack();},{once:true});
+  }else{
+   if(liveConnection)liveConnection.textContent="Community connection unavailable";
+   if(liveConnectionDetail)liveConnectionDetail.textContent="Please refresh to reconnect.";
+  }
+  const loadLiveEpisode=async()=>{
+   const shell=document.querySelector("[data-live-latest]");
+   if(!db||!shell)return;
+   try{
+    const {data,error}=await db.from("back_deck_episodes").select("title,description,youtube_video_id,published_at").eq("is_published",true).eq("show_in_main_player",true).lte("published_at",new Date().toISOString()).order("published_at",{ascending:false}).limit(1).maybeSingle();
+    if(error)throw error;
+    if(!data?.youtube_video_id)throw new Error("No published episode is available yet.");
+    if(!/^[A-Za-z0-9_-]{11}$/.test(data.youtube_video_id))throw new Error("The latest episode video is not configured correctly.");
+    const frame=document.createElement("iframe");
+    frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(data.youtube_video_id)+"?rel=0";
+    frame.title=data.title||"Latest Back Deck Live episode";
+    frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
+    frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    frame.allowFullscreen=true;
+    shell.replaceChildren(frame);
+    const title=document.querySelector("[data-live-episode-title]");
+    const description=document.querySelector("[data-live-episode-description]");
+    const link=document.querySelector("[data-live-episode-link]");
+    if(title)title.textContent=data.title||"Latest Back Deck Live episode";
+    if(description)description.textContent=data.description||"Watch the latest Back Deck Live conversation.";
+    if(link)link.href="https://www.youtube.com/watch?v="+encodeURIComponent(data.youtube_video_id);
+    if(link)link.textContent="Watch on YouTube ↗";
+   }catch(error){
+    console.warn("Back Deck Live latest episode could not load:",error.message);
+    shell.replaceChildren();
+    const empty=document.createElement("div");empty.className="live-player-placeholder";
+    const heading=document.createElement("p");heading.textContent="THE LATEST EPISODE WILL APPEAR HERE";
+    const detail=document.createElement("small");detail.textContent="Visit the episodes page to browse published conversations.";
+    empty.append(heading,detail);shell.append(empty);
+    const title=document.querySelector("[data-live-episode-title]");if(title)title.textContent="Latest episode not available";
+    const description=document.querySelector("[data-live-episode-description]");if(description)description.textContent="Check back soon for the next conversation.";
+   }
+  };
+  loadLiveEpisode();
+ }
+
  const makePlayer=(videoId,title)=>{
   const shell=document.querySelector("[data-main-video]");
   if(!shell||!videoId||!/^[a-zA-Z0-9_-]{6,20}$/.test(videoId))return;

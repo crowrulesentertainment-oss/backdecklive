@@ -1,5 +1,15 @@
 document.addEventListener("DOMContentLoaded",()=>{
+ const ADMIN_URL="https://crowrulesentertainment-oss.github.io/crowrulesentertainment/back-deck-live/admin.html";
  const toggle=document.querySelector(".menu-toggle"),nav=document.querySelector(".main-nav");
+ // Keep the authenticated production workspace reachable from every public page.
+ if(nav&&!nav.querySelector('a[href="'+ADMIN_URL+'"]')){
+  const adminLink=document.createElement("a");
+  adminLink.href=ADMIN_URL;
+  adminLink.className="nav-admin";
+  adminLink.textContent="Admin";
+  adminLink.setAttribute("aria-label","Open Back Deck Live administration");
+  nav.append(adminLink);
+ }
  if(toggle&&nav)toggle.addEventListener("click",()=>{const open=nav.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));});
  document.querySelectorAll("[data-year]").forEach(el=>el.textContent=new Date().getFullYear());
 

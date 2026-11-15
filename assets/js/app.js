@@ -302,10 +302,19 @@ document.addEventListener("DOMContentLoaded",()=>{
    grid.replaceChildren();
    data.forEach(ep=>{
     const card=document.createElement("article");card.className="content-card episode-card";
+    const videoId=String(ep.youtube_video_id||"").trim();
+    const videoUrl=/^[A-Za-z0-9_-]{11}$/.test(videoId)?"https://www.youtube.com/watch?v="+encodeURIComponent(videoId):"";
+    if(videoUrl){
+     const thumbnailLink=document.createElement("a");thumbnailLink.className="episode-thumbnail-link";thumbnailLink.href=videoUrl;thumbnailLink.target="_blank";thumbnailLink.rel="noopener";thumbnailLink.setAttribute("aria-label","Watch "+(ep.title||"Back Deck Live episode"));
+     const thumbnail=document.createElement("img");thumbnail.className="episode-thumbnail";thumbnail.src="https://i.ytimg.com/vi/"+encodeURIComponent(videoId)+"/hqdefault.jpg";thumbnail.alt=(ep.title||"Back Deck Live episode")+" video thumbnail";thumbnail.loading="lazy";thumbnail.decoding="async";
+     thumbnailLink.append(thumbnail);card.append(thumbnailLink);
+    }else{
+     const placeholder=document.createElement("div");placeholder.className="episode-thumbnail episode-thumbnail-placeholder";placeholder.textContent="BACK DECK LIVE";card.append(placeholder);
+    }
     const heading=document.createElement("h2");heading.textContent=ep.title||"Back Deck Live episode";
     const category=document.createElement("p");category.className="eyebrow";category.textContent=ep.category||"Back Deck Conversations";
     const desc=document.createElement("p");desc.textContent=ep.description||"";
-    const link=document.createElement("a");link.className="button button-gold";link.href="https://www.youtube.com/watch?v="+encodeURIComponent(ep.youtube_video_id);link.target="_blank";link.rel="noopener";link.textContent="Watch episode ↗";
+    const link=document.createElement("a");link.className="button button-gold";link.href=videoUrl||"https://www.youtube.com/@CrowRules_TV";link.target="_blank";link.rel="noopener";link.textContent="Watch episode ↗";
     card.append(category,heading,desc,link);grid.append(card);
    });
   }catch(error){console.warn("Back Deck Live episodes could not load:",error.message);}

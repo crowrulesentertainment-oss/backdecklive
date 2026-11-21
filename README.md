@@ -56,10 +56,11 @@ Secure workspace: https://crowrulesentertainment-oss.github.io/backdecklive/prod
 - `back_deck_broadcast_schedule`
 - `back_deck_guest_bookings`
 - `back_deck_production_tasks`
+- `back_deck_show_rundown`
 
 All four new tables have RLS enabled and are restricted to authenticated users present in `back_deck_admins`. Anonymous/public grants are revoked; authenticated table privileges are limited to SELECT, INSERT, UPDATE and DELETE, with RLS policies enforcing the administrator allowlist. Guest contact details and private notes are not exposed to public roles.
 
-The additive schema is documented in `supabase/production-center-schema.sql`. No existing Back Deck Live tables or RLS policies were dropped or replaced.
+The additive schema is documented in `supabase/production-center-schema.sql`. The live rundown stores timed segments, segment leads, producer notes, production cues, status and actual start/end timestamps, linked to episode plans and optional broadcast schedule entries. Its RLS policy uses the same existing administrator allowlist. No existing Back Deck Live tables or RLS policies were dropped or replaced.
 
 ### Weekly calendar and reminders
 - Weekly calendar combines broadcast schedule entries, episode recording/publish targets, and open checklist tasks with due dates.

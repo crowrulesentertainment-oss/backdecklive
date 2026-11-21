@@ -93,3 +93,31 @@ drop policy if exists "Back Deck admins manage guest bookings" on public.back_de
 create policy "Back Deck admins manage guest bookings" on public.back_deck_guest_bookings for all to authenticated using (exists(select 1 from public.back_deck_admins a where a.user_id=(select auth.uid()))) with check (exists(select 1 from public.back_deck_admins a where a.user_id=(select auth.uid())));
 drop policy if exists "Back Deck admins manage production tasks" on public.back_deck_production_tasks;
 create policy "Back Deck admins manage production tasks" on public.back_deck_production_tasks for all to authenticated using (exists(select 1 from public.back_deck_admins a where a.user_id=(select auth.uid()))) with check (exists(select 1 from public.back_deck_admins a where a.user_id=(select auth.uid())));
+
+
+-- Live show rundown and control room
+create table if not exists public.back_deck_show_rundown (
+ id uuid primary key default gen_random_uuid(),
+ production_episode_id uuid not null references public.back_deck_production_episodes(id) on delete cascade,
+ broadcast_schedule_id uuid references public.back_deck_broadcast_schedule(id) on delete set null,
+ segment_title text not null check (char_length(btrim(segment_title)) between 1 and 180),
+ segment_type text not null default 'conversation' check (segment_type in ('opening','conversation','guest','feature','community','break','closing','technical')),
+ sort_order integer not null default 10,
+ duration_minutes integer not null default 5 check (duration_minutes between 1 and 180),
+ host_or_lead text not null default '',
+ producer_notes text not null default '',
+ production_cue text not null default '',
+ status text not null default 'pending' check (status in ('pending','ready','on_air','completed','skipped')),
+ actual_started_at timestamptz,
+ actual_ended_at timestamptz,
+ created_by uuid references auth.users(id) on delete set null,
+ created_at timestamptz not null default now(),
+ updated_at timestamptz not null default now()
+);
+create index if not exists back_deck_rundown_episode_order_idx on public.back_deck_show_rundown(production_episode_id,sort_order);
+create index if not exists back_deck_rundown_status_idx on public.back_deck_show_rundown(status);
+alter table public.back_deck_show_rundown enable row level security;
+revoke all privileges on table public.back_deck_show_rundown from anon, public, authenticated;
+grant select,insert,update,delete on public.back_deck_show_rundown to authenticated;
+drop policy if exists "Back Deck admins manage show rundowns" on public.back_deck_show_rundown;
+create policy "Back Deck admins manage show rundowns" on public.back_deck_show_rundown for all to authenticated using (exists(select 1 from public.back_deck_admins a where a.user_id=(select auth.uid()))) with check (exists(select 1 from public.back_deck_admins a where a.user_id=(select auth.uid())));

@@ -2,12 +2,17 @@ document.addEventListener("DOMContentLoaded",()=>{
  const ADMIN_URL="https://crowrulesentertainment-oss.github.io/backdecklive/production-center/";
  const toggle=document.querySelector(".menu-toggle"),nav=document.querySelector(".main-nav");
  // Keep the authenticated production workspace reachable from every public page.
- if(nav&&!nav.querySelector('a[href="'+ADMIN_URL+'"]')){
+ const existingAdminLink=nav?.querySelector(".nav-admin");
+ if(existingAdminLink){
+  existingAdminLink.href=ADMIN_URL;
+  existingAdminLink.removeAttribute("target");
+  existingAdminLink.removeAttribute("rel");
+ }else if(nav){
   const adminLink=document.createElement("a");
   adminLink.href=ADMIN_URL;
   adminLink.className="nav-admin";
-  adminLink.textContent="Admin";
-  adminLink.setAttribute("aria-label","Open Back Deck Live administration");
+  adminLink.textContent="Production Center";
+  adminLink.setAttribute("aria-label","Open Back Deck Live Production Center");
   nav.append(adminLink);
  }
 

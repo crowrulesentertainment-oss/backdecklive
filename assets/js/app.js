@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded",()=>{
  const existingAdminLink=nav?.querySelector(".nav-admin");
  if(existingAdminLink){
   existingAdminLink.href=ADMIN_URL;
+  existingAdminLink.textContent="Production Center";
+  existingAdminLink.setAttribute("aria-label","Open Back Deck Live Production Center");
   existingAdminLink.removeAttribute("target");
   existingAdminLink.removeAttribute("rel");
  }else if(nav){

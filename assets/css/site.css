@@ -162,3 +162,27 @@
 .episode-card>p:not(.eyebrow){font-size:13px;color:#667066;flex:1}
 .episode-card>.button{align-self:flex-start;margin-top:8px;margin-bottom:20px}
 @media(max-width:600px){.episode-grid{grid-template-columns:1fr}}
+
+
+/* Expanded Back Deck Live pages */
+.schedule-feature-card{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:stretch;background:linear-gradient(125deg,#18291f,#304735);color:#f7f2e8;padding:clamp(26px,5vw,54px);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px #17231d20}
+.schedule-feature-card h2{color:#fff;font-size:clamp(34px,4vw,48px);margin:0 0 8px}
+.schedule-feature-card p:not(.eyebrow){color:#d4dbd0;max-width:560px}
+.schedule-feature-time{font:700 clamp(34px,4.5vw,56px)/1.1 "Playfair Display",Georgia,serif;color:#e0bd82!important;margin:16px 0}
+.schedule-feature-time span{font:600 12px "DM Sans",sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.schedule-feature-art,.people-photo{min-height:280px;border-radius:16px;background:linear-gradient(0deg,#14221a55,#14221a10),url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1100&q=85') center/cover}
+.schedule-section-heading{margin-top:62px}
+.event-card{display:flex;align-items:center;gap:25px;padding:26px;background:#fff;border:1px solid var(--line);border-radius:18px;margin:18px 0 30px;box-shadow:0 12px 35px #17231d0b}
+.event-date{width:82px;height:82px;flex:0 0 82px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1c3023;color:#fff;border-radius:14px}
+.event-date strong{font:700 36px/1 "Playfair Display",Georgia,serif;color:#e0bd82}
+.event-date span{font-size:9px;letter-spacing:.15em;margin-top:7px}
+.event-copy{flex:1}.event-copy h3{font-size:25px;margin:2px 0 8px;color:var(--forest)}.event-copy p:not(.eyebrow){font-size:13px;color:#677066;margin:0 0 9px}.event-meta{font-size:11px!important;font-weight:700;color:#80633e!important}
+.people-intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-bottom:40px}
+.people-intro-grid h2{font-size:clamp(34px,4vw,48px)}.people-photo{background-image:linear-gradient(0deg,#14221a22,#14221a00),url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1100&q=85')}
+.people-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:30px 0}
+.people-cards .content-card{margin:0}.people-cards h3{font:700 23px "Playfair Display",Georgia,serif;color:var(--forest);margin:6px 0}.people-cards p:not(.eyebrow){font-size:13px;color:#687168}.people-icon{font-size:26px}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}.contact-grid .content-card{margin:0}.contact-email{font-size:12px;color:#7a684d;margin-top:18px}
+.contact-list{list-style:none;padding:0;margin:20px 0 0}.contact-list li{padding:16px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:5px}.contact-list strong{color:var(--forest);font-size:14px}.contact-list span{font-size:12px;color:#697168}.contact-list a,.faq-item a{font-size:12px;font-weight:700;color:#86653c}
+.faq-list{max-width:900px}.faq-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 23px;margin:12px 0}.faq-item summary{cursor:pointer;font:700 20px "Playfair Display",Georgia,serif;color:var(--forest);list-style-position:outside}.faq-item p{font-size:13px;color:#657066;margin:14px 0 0}
+@media(max-width:800px){.schedule-feature-card,.people-intro-grid,.contact-grid{grid-template-columns:1fr}.schedule-feature-art,.people-photo{min-height:220px}.people-cards{grid-template-columns:1fr}.event-card{align-items:flex-start;flex-wrap:wrap}.event-card>.button{margin-left:106px}}
+@media(max-width:520px){.schedule-feature-card{padding:24px}.event-card{gap:15px}.event-date{width:68px;height:68px;flex-basis:68px}.event-copy{min-width:calc(100% - 90px)}.event-card>.button{margin-left:83px}}

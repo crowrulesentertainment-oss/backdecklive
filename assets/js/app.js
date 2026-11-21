@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded",()=>{
- const ADMIN_URL="https://crowrulesentertainment-oss.github.io/crowrulesentertainment/back-deck-live/admin.html";
+ const ADMIN_URL="https://crowrulesentertainment-oss.github.io/backdecklive/production-center/";
  const toggle=document.querySelector(".menu-toggle"),nav=document.querySelector(".main-nav");
  // Keep the authenticated production workspace reachable from every public page.
  if(nav&&!nav.querySelector('a[href="'+ADMIN_URL+'"]')){

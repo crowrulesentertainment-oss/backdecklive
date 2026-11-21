@@ -38,3 +38,25 @@ Never commit service-role keys, OAuth client secrets or private API tokens. Publ
 
 ## Deployment
 GitHub Pages should use the `main` branch and `/(root)` as the publishing source. After a push, allow Pages to finish its deployment, then test the public pages on desktop and mobile.
+
+
+## Production Center
+Secure workspace: https://crowrulesentertainment-oss.github.io/backdecklive/production-center/
+
+- Supabase Auth sign-in with the existing `back_deck_admins` allowlist; no public registration or self-service admin elevation.
+- Episode planning: episode type, pipeline status, record/publish targets, runtime, contributors, topic, run-of-show, production notes and YouTube ID.
+- Broadcast scheduling: weekly shows, special events, premieres, rehearsals and recording sessions, with dates, status, YouTube URL and linked episode.
+- Guest bookings: private guest contact information, proposed topics, preferred times, booking pipeline and private production notes.
+- Crew management: reuses the existing `back_deck_crew` table and its existing admin policies.
+- Production checklist: tasks by department, priority, assignee, due date, linked episode and completion status; includes a weekly-show task template.
+- Guest intake: authorized staff can convert existing public guest-interest submissions into private booking records, with duplicate conversion prevented by a unique source-submission index.
+
+### New database tables
+- `back_deck_production_episodes`
+- `back_deck_broadcast_schedule`
+- `back_deck_guest_bookings`
+- `back_deck_production_tasks`
+
+All four new tables have RLS enabled and are restricted to authenticated users present in `back_deck_admins`. Anonymous/public grants are revoked; authenticated table privileges are limited to SELECT, INSERT, UPDATE and DELETE, with RLS policies enforcing the administrator allowlist. Guest contact details and private notes are not exposed to public roles.
+
+The additive schema is documented in `supabase/production-center-schema.sql`. No existing Back Deck Live tables or RLS policies were dropped or replaced.

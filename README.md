@@ -68,3 +68,30 @@ The additive schema is documented in `supabase/production-center-schema.sql`. Th
 - Reminder center surfaces overdue tasks, tasks due within 48 hours, upcoming broadcasts, episode milestones and guest follow-ups.
 - Optional browser notifications can alert for items in the next 24 hours while an authorized administrator keeps the Production Center open. Browser notifications are device/browser-local and are not email/SMS; they cannot run while the page is closed.
 - A separate weekly ChatGPT reminder prompts the producer on Friday mornings to review the Saturday show checklist, guests, crew, recording/editing, upload/premiere and promotion.
+## Live telemetry connections
+
+The Production Center Technical Broadcast Panel can read live telemetry without storing credentials in the public repository.
+
+### OBS Studio (local WebSocket)
+1. Use OBS Studio 28 or later (obs-websocket v5 is included).
+2. In OBS, open Tools → WebSocket Server Settings, enable the WebSocket server, keep authentication enabled, and use the configured port (default 4455).
+3. Keep OBS and the Production Center open on the same computer. In Technical preflight → OBS & YouTube connections, use host 127.0.0.1, port 4455, enter the OBS WebSocket password, and select Connect to OBS.
+4. The panel polls OBS stream status and statistics every three seconds: output state/reconnecting, estimated bitrate from output-byte deltas, skipped output frames and percentage, active FPS, CPU and output congestion.
+5. The OBS password is held only in the page's memory/input field and is not written to localStorage or sent to Supabase. Disconnect or close the page to end the session.
+
+Do not expose the OBS WebSocket port to the public internet. Keep it on localhost and use OBS authentication. A browser-based connection to a remote LAN host may be blocked by HTTPS mixed-content/browser security; use a local computer address and a supported secure local bridge if the production computer is remote.
+
+### YouTube Live (read-only OAuth)
+1. In Google Cloud Console, create/select a project, enable YouTube Data API v3, and configure the OAuth consent screen.
+2. Create an OAuth 2.0 Client ID → Web application. Add https://crowrulesentertainment-oss.github.io as an authorized JavaScript origin.
+3. Paste the Web Client ID (not a client secret) into the YouTube connection field in the Technical Broadcast Panel and select Connect YouTube read-only.
+4. Approve the youtube.readonly scope for the CrowRules channel. The panel reads the channel's live broadcast lifecycle, linked ingest stream status and YouTube health/configuration issues, refreshing every 30 seconds.
+
+The Google OAuth client ID is a public identifier and may be stored locally in this browser. The access token remains in memory only; no OAuth client secret is used in the browser and no token is committed to GitHub. Disconnect YouTube or close the page to discard the token. YouTube API quota and channel live-streaming eligibility still apply.
+
+### Interpretation and fallback
+- OBS metrics describe the encoder/output on the computer running OBS; YouTube health describes platform ingest. They are distinct signals and should be reviewed together.
+- Estimated bitrate is calculated from OBS output bytes between telemetry polls; it is not a YouTube viewer-delivery bitrate.
+- OBS dropped-frame percentage is based on the output's skipped-frame and total-frame counters. Render-thread skips are shown separately in the update line.
+- Manual operator checks and backup-path verification remain available. A successful OBS connection does not verify microphones, cameras, remote guests, or backup-stream readiness.
+- No production database tables or RLS policies are changed by these integrations.

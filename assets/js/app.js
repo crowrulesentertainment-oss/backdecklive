@@ -10,6 +10,21 @@ document.addEventListener("DOMContentLoaded",()=>{
   adminLink.setAttribute("aria-label","Open Back Deck Live administration");
   nav.append(adminLink);
  }
+
+ if(nav){
+  const extraLinks=[{label:"Schedule",path:"pages/schedule/"},{label:"People",path:"pages/crew/"},{label:"FAQ",path:"pages/faq/"},{label:"Contact",path:"pages/contact/"}];
+  extraLinks.forEach(item=>{
+   const target=new URL(item.path,"https://crowrulesentertainment-oss.github.io/backdecklive/").pathname;
+   const exists=[...nav.querySelectorAll("a")].some(link=>{try{return new URL(link.href).pathname===target;}catch{return false;}});
+   if(exists)return;
+   const link=document.createElement("a");
+   link.href="https://crowrulesentertainment-oss.github.io/backdecklive/"+item.path;
+   link.textContent=item.label;
+   if(window.location.pathname===target||window.location.pathname.startsWith(target)){link.classList.add("active");link.setAttribute("aria-current","page");}
+   nav.insertBefore(link,nav.querySelector(".nav-admin")||null);
+  });
+ }
+
  if(toggle&&nav)toggle.addEventListener("click",()=>{const open=nav.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));});
  document.querySelectorAll("[data-year]").forEach(el=>el.textContent=new Date().getFullYear());
 

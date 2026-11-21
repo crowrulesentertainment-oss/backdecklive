@@ -60,3 +60,10 @@ Secure workspace: https://crowrulesentertainment-oss.github.io/backdecklive/prod
 All four new tables have RLS enabled and are restricted to authenticated users present in `back_deck_admins`. Anonymous/public grants are revoked; authenticated table privileges are limited to SELECT, INSERT, UPDATE and DELETE, with RLS policies enforcing the administrator allowlist. Guest contact details and private notes are not exposed to public roles.
 
 The additive schema is documented in `supabase/production-center-schema.sql`. No existing Back Deck Live tables or RLS policies were dropped or replaced.
+
+### Weekly calendar and reminders
+- Weekly calendar combines broadcast schedule entries, episode recording/publish targets, and open checklist tasks with due dates.
+- Week navigation supports previous, current and next week; current day is highlighted.
+- Reminder center surfaces overdue tasks, tasks due within 48 hours, upcoming broadcasts, episode milestones and guest follow-ups.
+- Optional browser notifications can alert for items in the next 24 hours while an authorized administrator keeps the Production Center open. Browser notifications are device/browser-local and are not email/SMS; they cannot run while the page is closed.
+- A separate weekly ChatGPT reminder prompts the producer on Friday mornings to review the Saturday show checklist, guests, crew, recording/editing, upload/premiere and promotion.

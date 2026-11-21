@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111b14">
 <meta name="robots" content="noindex,nofollow"><title>Production Center | Back Deck Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2"></script><script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{--bg:#101711;--panel:#19231b;--panel2:#202d22;--line:#354438;--text:#f4f1e8;--muted:#a9b3a7;--gold:#d4ad70;--green:#9bc49a;--red:#ef928b;--radius:17px}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#344735 0,transparent 38%),var(--bg);color:var(--text);font:14px/1.6 "DM Sans",sans-serif;min-height:100vh}a{color:var(--gold);text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}.top{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px max(4%,calc((100% - 1500px)/2));background:#101711ed;border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.brand{font-weight:800;letter-spacing:.12em}.brand b{color:var(--gold)}.brand small{display:block;font-size:9px;color:var(--muted);letter-spacing:.18em;font-weight:500}.top-actions,.actions,.tabs{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.wrap{max-width:1500px;margin:auto;padding:32px 4% 80px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}h1,h2,h3{font-family:"Playfair Display",Georgia,serif;line-height:1.15;margin:0 0 10px}h1{font-size:clamp(34px,5vw,58px)}h2{font-size:26px}h3{font-size:20px}.muted{color:var(--muted)}.lead{font-size:15px;color:#c3cbbf;max-width:760px}.panel{background:linear-gradient(145deg,#202c22,#172119);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:18px 0;box-shadow:0 16px 45px #0002}.login{max-width:480px;margin:9vh auto}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:700;color:#e0e5d9}input,textarea,select{width:100%;min-height:44px;background:#101811;border:1px solid #4a594a;border-radius:9px;color:var(--text);padding:11px 12px}textarea{min-height:95px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid #d4ad7070;border-color:var(--gold)}.btn{border:1px solid #536451;background:#263328;color:var(--text);border-radius:9px;padding:10px 14px;font-weight:700;font-size:12px}.btn:hover{background:#354637}.btn.primary{background:var(--gold);color:#1b211a;border-color:var(--gold)}.btn.danger{color:#ffc0ba;border-color:#814b45}.btn.small{padding:6px 9px;font-size:11px}.btn:disabled{opacity:.5;cursor:not-allowed}.hidden{display:none!important}.notice{padding:12px 14px;border-radius:9px;background:#29382b;border:1px solid #50674f;color:#e3f0df;margin:12px 0}.notice.error{background:#3a2220;border-color:#814b45;color:#ffd2cd}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.stat{background:#111a13;border:1px solid var(--line);border-radius:13px;padding:17px}.stat strong{display:block;font:700 30px "Playfair Display",serif;color:var(--gold)}.stat span{font-size:11px;color:var(--muted)}.tabs{margin:24px 0 18px;border-bottom:1px solid var(--line);padding-bottom:12px}.tab.active{background:var(--gold);color:#182018;border-color:var(--gold)}.section{display:none}.section.active{display:block}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:760px}th,td{text-align:left;vertical-align:top;padding:12px 10px;border-bottom:1px solid var(--line);font-size:12px}th{color:var(--gold);font-size:10px;letter-spacing:.1em;text-transform:uppercase}td{overflow-wrap:anywhere}.pill{display:inline-block;border-radius:30px;padding:3px 8px;background:#2c3b2e;color:#c7e3c3;font-size:10px}.pill.warn{background:#473a26;color:#f1d29b}.pill.red{background:#482824;color:#ffc1b8}.empty{padding:20px;text-align:center;color:var(--muted)}.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.task{display:flex;gap:10px;align-items:flex-start;background:#111a13;border:1px solid var(--line);border-radius:11px;padding:12px}.task input{width:17px;min-height:17px;margin-top:3px;accent-color:#d4ad70}.task.done span{text-decoration:line-through;color:#849084}.task strong{display:block}.task small{display:block;color:var(--muted)}.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.quick{padding:16px;background:#111a13;border:1px solid var(--line);border-radius:12px}.quick strong{font:700 25px "Playfair Display",serif;color:var(--gold)}.quick span{display:block;color:var(--muted);font-size:11px}.hint{font-size:11px;color:var(--muted)}footer{text-align:center;border-top:1px solid var(--line);padding:22px;color:var(--muted);font-size:11px}
@@ -73,6 +73,39 @@
 <div class="panel"><p class="eyebrow">Video verification</p><h2>Video chain</h2><div class="checklist" id="techVideo"></div></div>
 </div>
 <div class="panel"><p class="eyebrow">Fallback procedures</p><h2>If the primary stream fails</h2><ol class="muted"><li>Producer calls a brief hold and confirms whether the issue is local, encoder-side or platform-side.</li><li>Check network connectivity, OBS output status, dropped frames, encoder load and platform stream health.</li><li>If the primary path cannot recover promptly, announce a short technical break; do not expose private dashboards or credentials.</li><li>Switch to the pre-tested backup encoder / network / stream destination only after confirming the backup is configured and authorized.</li><li>Verify audio and video on the backup destination, then tell the audience the stream has resumed.</li><li>If no safe backup is available, stop the stream cleanly, publish an update through the approved CrowRules channels and reschedule.</li></ol><div class="notice">Never share stream keys, passwords, private RTMP URLs or account recovery codes in this panel or in producer notes. Store credentials only in the approved password manager / secure platform settings.</div></div>
+
+<div class="panel" id="telemetryPanel">
+ <div class="section-head"><div><p class="eyebrow">Live system telemetry · automatic readings</p><h2>OBS & YouTube connections</h2><p class="muted">Connect OBS on this production computer and authorize read-only YouTube Live access. Telemetry is separate from the operator checklist.</p></div><span class="pill warn" id="telemetryOverall">NOT CONNECTED</span></div>
+ <div class="grid">
+  <div class="field"><label for="obsHost">OBS computer address</label><input id="obsHost" value="127.0.0.1" autocomplete="off"></div>
+  <div class="field"><label for="obsPort">OBS WebSocket port</label><input id="obsPort" type="number" min="1" max="65535" value="4455"></div>
+  <div class="field full"><label for="obsPassword">OBS WebSocket password</label><input id="obsPassword" type="password" autocomplete="new-password" placeholder="Entered for this session only"></div>
+  <div class="field full"><div class="actions"><button class="btn primary" id="obsConnect" type="button">Connect to OBS</button><button class="btn" id="obsDisconnect" type="button" disabled>Disconnect</button><span class="hint" id="obsConnection" role="status">OBS not connected</span></div></div>
+ </div>
+ <div class="quick-grid" style="margin-top:16px">
+  <div class="quick"><strong id="obsState">—</strong><span>OBS stream output</span></div>
+  <div class="quick"><strong id="obsBitrate">—</strong><span>Estimated bitrate</span></div>
+  <div class="quick"><strong id="obsDropped">—</strong><span>Output dropped frames</span></div>
+  <div class="quick"><strong id="obsFps">—</strong><span>Active FPS</span></div>
+  <div class="quick"><strong id="obsCpu">—</strong><span>OBS CPU usage</span></div>
+  <div class="quick"><strong id="obsCongestion">—</strong><span>Output congestion</span></div>
+ </div>
+ <p class="hint" id="obsUpdated">No OBS telemetry received yet. OBS WebSocket must be enabled in OBS → Tools → WebSocket Server Settings.</p>
+</div>
+<div class="panel">
+ <div class="section-head"><div><p class="eyebrow">YouTube Live API · read-only</p><h2>Channel broadcast health</h2><p class="muted">Use a Google OAuth Web Client ID authorized for this GitHub Pages origin and the YouTube Data API v3.</p></div><span class="pill warn" id="ytConnection">NOT CONNECTED</span></div>
+ <div class="grid">
+  <div class="field full"><label for="ytClientId">Google OAuth Web Client ID</label><input id="ytClientId" type="text" autocomplete="off" placeholder="xxxx.apps.googleusercontent.com"></div>
+  <div class="field full"><div class="actions"><button class="btn primary" id="ytConnect" type="button">Connect YouTube read-only</button><button class="btn" id="ytDisconnect" type="button" disabled>Disconnect YouTube</button><span class="hint" id="ytUpdated">No YouTube account connected.</span></div></div>
+ </div>
+ <div class="quick-grid" style="margin-top:16px">
+  <div class="quick"><strong id="ytBroadcast">—</strong><span>Broadcast status</span></div>
+  <div class="quick"><strong id="ytIngest">—</strong><span>Ingest stream status</span></div>
+  <div class="quick"><strong id="ytHealth">—</strong><span>YouTube stream health</span></div>
+ </div>
+ <div id="ytWarnings" class="notice" style="margin-top:14px">Connect YouTube to retrieve broadcast status and ingest configuration warnings.</div>
+ <p class="hint">The page requests only <code>youtube.readonly</code>. The access token remains in memory and is discarded when the page is closed or YouTube is disconnected.</p>
+</div>
 </section><section id="calendar" class="section"><div class="panel"><div class="section-head"><div><p class="eyebrow">Weekly production view</p><h2>Production calendar</h2><p class="muted">Broadcasts, episode milestones and checklist deadlines in one weekly view.</p></div><div class="actions"><button class="btn" id="calendarPrev" type="button">← Previous</button><button class="btn" id="calendarToday" type="button">This week</button><button class="btn" id="calendarNext" type="button">Next →</button></div></div><div id="calendarRange" class="notice" aria-live="polite"></div><div id="calendarGrid" class="week-grid"></div><p class="hint">Times display in your browser's local time zone. Back Deck Live's regular broadcast is Saturday at 3:00 PM Pacific.</p></div></section>
 <section id="reminders" class="section"><div class="panel"><div class="section-head"><div><p class="eyebrow">Production follow-through</p><h2>Reminder center</h2><p class="muted">Highlights overdue tasks, approaching deadlines, guest follow-ups and upcoming broadcasts.</p></div><button class="btn primary" id="enableNotifications" type="button">Enable browser alerts</button></div><div id="notificationStatus" class="hint" role="status">In-app reminders are active while signed in. Browser alerts are optional.</div><div id="reminderSummary" class="stats"></div><div id="reminderList" class="reminder-list"></div></div><div class="panel"><p class="eyebrow">How alerts work</p><h3>Stay ahead of showtime</h3><p class="muted">The reminder center refreshes whenever production data loads. If enabled, browser alerts notify you about items due within 24 hours while the Production Center remains open in an alert-enabled browser. Alerts are not email or SMS and cannot run while the page/browser is closed.</p></div></section>
 <section id="guests" class="section"><div class="panel"><div class="section-head"><div><p class="eyebrow">Guest Lounge</p><h2 id="guestHeading">Add guest / booking</h2></div><button class="btn" id="resetGuest">Clear form</button></div><form id="guestForm"><input type="hidden" id="guestId"><div class="grid"><div class="field"><label for="guestName">Guest name *</label><input id="guestName" maxlength="120" required></div><div class="field"><label for="guestEmail">Email *</label><input id="guestEmail" type="email" maxlength="254" required></div><div class="field"><label for="guestLocation">Location</label><input id="guestLocation" maxlength="160"></div><div class="field"><label for="guestProfile">Website / profile URL</label><input id="guestProfile" type="url" maxlength="500"></div><div class="field"><label for="guestStatus">Booking status</label><select id="guestStatus"><option value="new">New request</option><option value="contacted">Contacted</option><option value="interested">Interested</option><option value="confirmed">Confirmed</option><option value="completed">Completed</option><option value="declined">Declined</option><option value="cancelled">Cancelled</option></select></div><div class="field"><label for="guestPreferred">Preferred date / time</label><input id="guestPreferred" type="datetime-local"></div><div class="field full"><label for="guestTopic">Proposed topic</label><textarea id="guestTopic" maxlength="4000"></textarea></div><div class="field full"><label for="guestBio">Guest bio / introduction</label><textarea id="guestBio" maxlength="4000"></textarea></div><div class="field full"><label for="guestNotes">Private production notes (admin only)</label><textarea id="guestNotes" maxlength="6000"></textarea></div><div class="field full"><label for="guestEpisode">Link to episode plan</label><select id="guestEpisode"><option value="">No linked episode</option></select></div></div><button class="btn primary" style="margin-top:16px" type="submit">Save guest booking</button><button class="btn hidden" id="cancelGuest" type="button">Cancel edit</button><p class="hint">Guest contact details and private notes are only accessible to authorized administrators. Public submissions are still reviewed separately.</p></form></div><div class="panel"><div class="section-head"><h2>Guest booking pipeline</h2><div class="actions"><button class="btn" id="importGuestSubmissions">Review guest submissions</button><button class="btn" id="reloadGuests">Refresh</button></div></div><div id="guestImport" class="notice hidden" role="status"></div><div class="table-wrap"><table><thead><tr><th>Guest</th><th>Topic</th><th>Status</th><th>Preferred date</th><th>Actions</th></tr></thead><tbody id="guestRows"></tbody></table></div></div></section>
@@ -123,12 +156,97 @@ const techGroups={
  "techVideo":[["Camera","Correct camera selected; framing and focus checked"],["Lighting","Exposure and lighting checked on stream preview"],["Scene transitions","Intro, host, guest, break and closing scenes tested"],["Stream preview","Video preview clean; no unintended sources or overlays"]]
 };
 const techAll=Object.values(techGroups).flat();
+let obsSocket=null,obsChallenge=null,obsSalt=null,obsRequestSeq=0,obsPending=new Map(),obsPoll=null,obsLastBytes=null,obsLastBytesAt=0,obsTelemetry=null,ytAccessToken=null,ytTokenClient=null,ytPoll=null,ytTelemetry=null;
+const encText=new TextEncoder();
+const b64=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes)));
+async function sha256(value){return b64(await crypto.subtle.digest("SHA-256",typeof value==="string"?encText.encode(value):value));}
+function obsSetConnection(text,ok=false){$("obsConnection").textContent=text;$("telemetryOverall").textContent=ok?"OBS CONNECTED":"CONNECTION REQUIRED";$("telemetryOverall").className="pill"+(ok?"":" warn");$("obsDisconnect").disabled=!ok;}
+function obsSend(type,data={}){if(!obsSocket||obsSocket.readyState!==WebSocket.OPEN)throw new Error("OBS WebSocket is not connected.");const requestId="bdl-"+(++obsRequestSeq);obsSocket.send(JSON.stringify({op:6,d:{requestType:type,requestId,requestData:data}}));return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{obsPending.delete(requestId);reject(new Error(type+" timed out"));},5000);obsPending.set(requestId,{resolve,reject,timer,type});});}
+async function obsIdentify(hello){
+ const auth=hello.d.authentication;
+ if(auth){if(!$("obsPassword").value)throw new Error("Enter the OBS WebSocket password.");const secret=await sha256($("obsPassword").value+auth.salt),response=await sha256(secret+auth.challenge);obsSocket.send(JSON.stringify({op:1,d:{rpcVersion:1,authentication:response,eventSubscriptions:0}}));}
+ else obsSocket.send(JSON.stringify({op:1,d:{rpcVersion:1,eventSubscriptions:0}}));
+}
+function obsDisconnect(){if(obsPoll)clearInterval(obsPoll);obsPoll=null;obsPending.forEach(p=>{clearTimeout(p.timer);p.reject(new Error("OBS disconnected"));});obsPending.clear();if(obsSocket){try{obsSocket.close();}catch(e){}obsSocket=null;}obsTelemetry=null;obsLastBytes=null;obsSetConnection("OBS not connected",false);$("obsState").textContent="—";$("obsBitrate").textContent="—";$("obsDropped").textContent="—";$("obsFps").textContent="—";$("obsCpu").textContent="—";$("obsCongestion").textContent="—";$("obsUpdated").textContent="No OBS telemetry received yet.";$("techObs").value="unknown";$("techStream").value="unknown";techRender();}
+async function obsConnect(){
+ obsDisconnect();const host=$("obsHost").value.trim()||"127.0.0.1",port=Number($("obsPort").value||4455);
+ if(!/^[a-zA-Z0-9.-]+$/.test(host)||!Number.isInteger(port)||port<1||port>65535){msg("Enter a valid OBS host and port.","error");return;}
+ obsSetConnection("Connecting to "+host+":"+port+"…",false);
+ try{
+  obsSocket=new WebSocket("ws://"+host+":"+port);
+  obsSocket.onmessage=async event=>{let packet;try{packet=JSON.parse(event.data);}catch(e){return;}
+   if(packet.op===0){try{await obsIdentify(packet);}catch(e){msg("OBS authentication failed: "+e.message,"error");obsDisconnect();}}
+   else if(packet.op===2){obsSetConnection("Connected to OBS · "+host+":"+port,true);$("techObs").value="connected";techRender();await obsRefresh();if(obsPoll)clearInterval(obsPoll);obsPoll=setInterval(obsRefresh,3000);}
+   else if(packet.op===7){const p=obsPending.get(packet.d.requestId);if(p){clearTimeout(p.timer);obsPending.delete(packet.d.requestId);if(packet.d.requestStatus?.result)p.resolve(packet.d.responseData||{});else p.reject(new Error(packet.d.requestStatus?.comment||"OBS request failed"));}}
+  };
+  obsSocket.onerror=()=>{obsSetConnection("OBS connection error · check host, port and firewall",false);};
+  obsSocket.onclose=()=>{if(obsPoll)clearInterval(obsPoll);obsPoll=null;obsSocket=null;obsTelemetry=null;obsSetConnection("OBS disconnected",false);$("techObs").value="disconnected";$("techStream").value="unknown";techRender();};
+ }catch(e){obsSetConnection("Could not connect: "+e.message,false);}
+}
+async function obsRefresh(){
+ if(!obsSocket||obsSocket.readyState!==WebSocket.OPEN)return;
+ try{
+  const [stream,stats]=await Promise.all([obsSend("GetStreamStatus"),obsSend("GetStats")]);obsTelemetry={stream,stats,at:Date.now()};
+  const now=Date.now(),bytes=Number(stream.outputBytes||0);let bitrate=null;if(obsLastBytes!==null&&now>obsLastBytesAt)bitrate=Math.max(0,(bytes-obsLastBytes)*8/((now-obsLastBytesAt)/1000)/1000);obsLastBytes=bytes;obsLastBytesAt=now;
+  const dropped=Number(stream.outputSkippedFrames||0),total=Number(stream.outputTotalFrames||0),pct=total?dropped/total*100:0;
+  $("obsState").textContent=stream.outputActive?(stream.outputReconnecting?"RECONNECTING":"STREAMING"):"OFFLINE";
+  $("obsBitrate").textContent=bitrate===null?"—":Math.round(bitrate)+" kbps";
+  $("obsDropped").textContent=dropped.toLocaleString()+" · "+pct.toFixed(2)+"%";
+  $("obsFps").textContent=Number(stats.activeFps||0).toFixed(1);
+  $("obsCpu").textContent=Number(stats.cpuUsage||0).toFixed(1)+"%";
+  $("obsCongestion").textContent=(Number(stream.outputCongestion||0)*100).toFixed(1)+"%";
+  $("obsUpdated").textContent="Live OBS telemetry · updated "+new Date().toLocaleTimeString()+" · render skips "+Number(stats.renderSkippedFrames||0).toLocaleString();
+  $("techObs").value="connected";
+  $("techStream").value=!stream.outputActive?"offline":stream.outputReconnecting||pct>2||Number(stream.outputCongestion||0)>.5?"degraded":"healthy";
+  techRender();
+ }catch(e){$("obsUpdated").textContent="Telemetry request failed: "+e.message;}
+}
+$("obsConnect").onclick=obsConnect;$("obsDisconnect").onclick=obsDisconnect;
+function ytSetConnection(text,ok=false){$("ytConnection").textContent=text;$("ytConnection").className="pill"+(ok?"":" warn");$("ytDisconnect").disabled=!ok;}
+function ytDisconnect(){if(ytPoll)clearInterval(ytPoll);ytPoll=null;ytAccessToken=null;ytTelemetry=null;ytSetConnection("NOT CONNECTED",false);$("ytBroadcast").textContent="—";$("ytIngest").textContent="—";$("ytHealth").textContent="—";$("ytUpdated").textContent="No YouTube account connected.";$("ytWarnings").textContent="Connect YouTube to retrieve broadcast status and ingest configuration warnings.";}
+async function ytApi(path,params){const url=new URL("https://www.googleapis.com/youtube/v3/"+path);Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));const res=await fetch(url,{headers:{Authorization:"Bearer "+ytAccessToken}});const data=await res.json();if(!res.ok)throw new Error(data.error?.message||"YouTube API request failed ("+res.status+")");return data;}
+async function ytRefresh(){
+ if(!ytAccessToken)return;
+ try{
+  const broadcasts=await ytApi("liveBroadcasts",{part:"id,snippet,status,contentDetails",mine:"true",broadcastStatus:"all",maxResults:"10"});
+  const active=(broadcasts.items||[]).find(x=>x.status?.lifeCycleStatus==="live")||(broadcasts.items||[]).find(x=>x.status?.lifeCycleStatus==="testing")||(broadcasts.items||[]).find(x=>x.status?.lifeCycleStatus==="ready")||(broadcasts.items||[]).find(x=>x.status?.lifeCycleStatus==="created");
+  let stream=null;if(active?.contentDetails?.boundStreamId){const streams=await ytApi("liveStreams",{part:"id,snippet,status",id:active.contentDetails.boundStreamId});stream=streams.items?.[0]||null;}
+  else {const streams=await ytApi("liveStreams",{part:"id,snippet,status",mine:"true",maxResults:"10"});stream=(streams.items||[]).find(x=>x.status?.streamStatus==="active")||(streams.items||[])[0]||null;}
+  ytTelemetry={broadcast:active,stream,at:Date.now()};
+  const state=active?.status?.lifeCycleStatus||"No active event",ingest=stream?.status?.streamStatus||"No stream selected",health=stream?.status?.healthStatus?.status||"No health data";
+  $("ytBroadcast").textContent=state.replaceAll("_"," ").toUpperCase();$("ytIngest").textContent=ingest.toUpperCase();$("ytHealth").textContent=health.toUpperCase();
+  const issues=stream?.status?.healthStatus?.configurationIssues||[];
+  $("ytWarnings").innerHTML=issues.length?issues.map(x=>"<strong>"+safe(x.severity||"Notice")+": "+safe(x.reason||x.type)+"</strong><br>"+safe(x.description)).join("<hr>"):"No ingest configuration warnings returned by YouTube.";
+  $("ytUpdated").textContent="Read-only YouTube telemetry · updated "+new Date().toLocaleTimeString()+(active?.snippet?.title?" · "+active.snippet.title:"");
+  const good=["good","ok"].includes(String(health).toLowerCase()),live=state==="live";
+  ytSetConnection("CONNECTED · "+(live?"LIVE":state.replaceAll("_"," ").toUpperCase()),true);
+  if(live&&ingest==="active"&&good){$("techStream").value="healthy";}else if(live&&(!good||ingest!=="active")){$("techStream").value="degraded";}
+  techRender();
+ }catch(e){$("ytUpdated").textContent="YouTube telemetry error: "+e.message;ytSetConnection("API ERROR",false);}
+}
+function ytConnect(){
+ const clientId=$("ytClientId").value.trim();if(!clientId.endsWith(".apps.googleusercontent.com")){msg("Enter a valid Google OAuth Web Client ID first.","error");return;}
+ if(!window.google?.accounts?.oauth2){msg("Google authorization library is still loading. Try again in a moment.","error");return;}
+ localStorage.setItem("bdl-yt-client-id",clientId);
+ ytTokenClient=google.accounts.oauth2.initTokenClient({client_id:clientId,scope:"https://www.googleapis.com/auth/youtube.readonly",callback:async response=>{if(response.error){ytSetConnection("AUTHORIZATION FAILED",false);$("ytUpdated").textContent=response.error;return;}ytAccessToken=response.access_token;ytSetConnection("CONNECTED",true);await ytRefresh();if(ytPoll)clearInterval(ytPoll);ytPoll=setInterval(ytRefresh,30000);}});
+ ytTokenClient.requestAccessToken({prompt:"consent"});
+}
+$("ytConnect").onclick=ytConnect;$("ytDisconnect").onclick=ytDisconnect;
+const savedYtClient=localStorage.getItem("bdl-yt-client-id");if(savedYtClient)$("ytClientId").value=savedYtClient;
 function techRender(){
  for(const [id,items] of Object.entries(techGroups)){$(id).innerHTML=items.map((item,i)=>{const key=id+"-"+i,checked=localStorage.getItem("bdl-tech-"+key)==="1";return '<label class="task"><input type="checkbox" data-tech-check="'+key+'" '+(checked?"checked":"")+'><span><strong>'+safe(item[0])+'</strong><small>'+safe(item[1])+'</small></span></label>';}).join("");}
- const count=techAll.filter((_,i)=>localStorage.getItem("bdl-tech-"+Object.keys(techGroups).flatMap(k=>techGroups[k].map((_,j)=>k+"-"+j))[i])==="1").length;
- const total=techAll.length,stream=$("techStream").value,obs=$("techObs").value,backup=$("techBackup").value;
- const critical=stream==="healthy"&&obs==="connected"&&backup==="ready",passed=count+(critical?3:0),all=total+3;
- $("techChecks").textContent=passed+"/"+all;$("techBlockers").textContent=all-passed;$("techOverall").textContent=passed===all?"PREFLIGHT COMPLETE":critical?"CHECKLIST INCOMPLETE":"NOT VERIFIED";$("techOverall").className="pill"+(passed===all?"": " warn");
+ const keys=Object.keys(techGroups).flatMap(k=>techGroups[k].map((_,j)=>k+"-"+j));
+ const count=keys.filter(k=>localStorage.getItem("bdl-tech-"+k)==="1").length,total=techAll.length;
+ const obsConnected=!!obsTelemetry&&!!obsSocket&&obsSocket.readyState===WebSocket.OPEN;
+ const obsStream=obsConnected?(obsTelemetry.stream.outputActive?(obsTelemetry.stream.outputReconnecting?"degraded":"healthy"):"offline"): $("techStream").value;
+ const obsState=obsConnected?"connected":$("techObs").value;
+ const ytGood=!!ytTelemetry&&String(ytTelemetry.stream?.status?.healthStatus?.status||"").toLowerCase()==="good"&&ytTelemetry.stream?.status?.streamStatus==="active";
+ const ytChecked=!!ytTelemetry;
+ const backup=$("techBackup").value,critical=[obsConnected&&obsState==="connected",obsConnected&&obsStream==="healthy",ytChecked&&ytGood,backup==="ready"];
+ const passed=count+critical.filter(Boolean).length,all=total+4;
+ $("techChecks").textContent=passed+"/"+all;$("techBlockers").textContent=all-passed;
+ $("techOverall").textContent=passed===all?"PREFLIGHT COMPLETE":"LIVE TELEMETRY / CHECKS INCOMPLETE";
+ $("techOverall").className="pill"+(passed===all?"":" warn");
  const now=new Date(),target=crNextSaturday(now),diff=target-now;
  $("techTarget").textContent=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}).format(target);
  $("techTminus").textContent=diff<=0?"SHOW TIME":crDuration(diff).replace(/^00:/,"");

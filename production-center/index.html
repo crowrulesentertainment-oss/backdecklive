@@ -167,7 +167,7 @@ async function obsIdentify(hello){
  if(auth){if(!$("obsPassword").value)throw new Error("Enter the OBS WebSocket password.");const secret=await sha256($("obsPassword").value+auth.salt),response=await sha256(secret+auth.challenge);obsSocket.send(JSON.stringify({op:1,d:{rpcVersion:1,authentication:response,eventSubscriptions:0}}));}
  else obsSocket.send(JSON.stringify({op:1,d:{rpcVersion:1,eventSubscriptions:0}}));
 }
-function obsDisconnect(){if(obsPoll)clearInterval(obsPoll);obsPoll=null;obsPending.forEach(p=>{clearTimeout(p.timer);p.reject(new Error("OBS disconnected"));});obsPending.clear();if(obsSocket){try{obsSocket.close();}catch(e){}obsSocket=null;}obsTelemetry=null;obsLastBytes=null;obsSetConnection("OBS not connected",false);$("obsState").textContent="—";$("obsBitrate").textContent="—";$("obsDropped").textContent="—";$("obsFps").textContent="—";$("obsCpu").textContent="—";$("obsCongestion").textContent="—";$("obsUpdated").textContent="No OBS telemetry received yet.";$("techObs").value="unknown";$("techStream").value="unknown";techRender();}
+function obsDisconnect(){if(obsPoll)clearInterval(obsPoll);obsPoll=null;obsPending.forEach(p=>{clearTimeout(p.timer);p.reject(new Error("OBS disconnected"));});obsPending.clear();if(obsSocket){const old=obsSocket;obsSocket=null;old.onclose=null;old.onmessage=null;old.onerror=null;try{old.close();}catch(e){}}obsTelemetry=null;obsLastBytes=null;obsSetConnection("OBS not connected",false);$("obsState").textContent="—";$("obsBitrate").textContent="—";$("obsDropped").textContent="—";$("obsFps").textContent="—";$("obsCpu").textContent="—";$("obsCongestion").textContent="—";$("obsUpdated").textContent="No OBS telemetry received yet.";$("techObs").value="unknown";$("techStream").value="unknown";techRender();}
 async function obsConnect(){
  obsDisconnect();const host=$("obsHost").value.trim()||"127.0.0.1",port=Number($("obsPort").value||4455);
  if(!/^[a-zA-Z0-9.-]+$/.test(host)||!Number.isInteger(port)||port<1||port>65535){msg("Enter a valid OBS host and port.","error");return;}
@@ -222,7 +222,7 @@ async function ytRefresh(){
   ytSetConnection("CONNECTED · "+(live?"LIVE":state.replaceAll("_"," ").toUpperCase()),true);
   if(live&&ingest==="active"&&good){$("techStream").value="healthy";}else if(live&&(!good||ingest!=="active")){$("techStream").value="degraded";}
   techRender();
- }catch(e){$("ytUpdated").textContent="YouTube telemetry error: "+e.message;ytSetConnection("API ERROR",false);}
+ }catch(e){ytTelemetry=null;$("ytUpdated").textContent="YouTube telemetry error: "+e.message;ytSetConnection("API ERROR",false);techRender();}
 }
 function ytConnect(){
  const clientId=$("ytClientId").value.trim();if(!clientId.endsWith(".apps.googleusercontent.com")){msg("Enter a valid Google OAuth Web Client ID first.","error");return;}
@@ -240,7 +240,7 @@ function techRender(){
  const obsConnected=!!obsTelemetry&&!!obsSocket&&obsSocket.readyState===WebSocket.OPEN;
  const obsStream=obsConnected?(obsTelemetry.stream.outputActive?(obsTelemetry.stream.outputReconnecting?"degraded":"healthy"):"offline"): $("techStream").value;
  const obsState=obsConnected?"connected":$("techObs").value;
- const ytGood=!!ytTelemetry&&String(ytTelemetry.stream?.status?.healthStatus?.status||"").toLowerCase()==="good"&&ytTelemetry.stream?.status?.streamStatus==="active";
+ const ytGood=!!ytTelemetry&&["good","ok"].includes(String(ytTelemetry.stream?.status?.healthStatus?.status||"").toLowerCase())&&ytTelemetry.stream?.status?.streamStatus==="active";
  const ytChecked=!!ytTelemetry;
  const backup=$("techBackup").value,critical=[obsConnected&&obsState==="connected",obsConnected&&obsStream==="healthy",ytChecked&&ytGood,backup==="ready"];
  const passed=count+critical.filter(Boolean).length,all=total+4;

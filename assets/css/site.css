@@ -186,3 +186,10 @@
 .faq-list{max-width:900px}.faq-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 23px;margin:12px 0}.faq-item summary{cursor:pointer;font:700 20px "Playfair Display",Georgia,serif;color:var(--forest);list-style-position:outside}.faq-item p{font-size:13px;color:#657066;margin:14px 0 0}
 @media(max-width:800px){.schedule-feature-card,.people-intro-grid,.contact-grid{grid-template-columns:1fr}.schedule-feature-art,.people-photo{min-height:220px}.people-cards{grid-template-columns:1fr}.event-card{align-items:flex-start;flex-wrap:wrap}.event-card>.button{margin-left:106px}}
 @media(max-width:520px){.schedule-feature-card{padding:24px}.event-card{gap:15px}.event-date{width:68px;height:68px;flex-basis:68px}.event-copy{min-width:calc(100% - 90px)}.event-card>.button{margin-left:83px}}
+
+
+.episode-tools{display:grid;grid-template-columns:1fr;gap:8px;margin:24px 0 18px;max-width:620px}
+.episode-tools label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#59665b}
+.episode-tools input{width:100%;min-height:48px;border:1px solid #cfd3ca;border-radius:10px;padding:12px 15px;font:inherit;background:#fff;color:var(--ink);outline-offset:3px}
+.episode-tools input:focus{border-color:#9b7949;box-shadow:0 0 0 3px #c59a5826}
+.episode-tools p{margin:0}

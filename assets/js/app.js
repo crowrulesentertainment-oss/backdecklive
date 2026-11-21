@@ -306,6 +306,19 @@ document.addEventListener("DOMContentLoaded",()=>{
    if(data?.video_type==="youtube"&&data.youtube_video_id)makePlayer(data.youtube_video_id,data.title);
   }catch(error){console.warn("Back Deck Live featured video could not load:",error.message);}
  };
+ const episodeSearch=document.querySelector("[data-episode-search]");
+ const episodeResults=document.querySelector("[data-episode-results]");
+ const filterEpisodeCards=()=>{
+  const grid=document.querySelector("[data-episode-grid]");
+  if(!grid)return;
+  const query=String(episodeSearch?.value||"").trim().toLowerCase();
+  const cards=[...grid.querySelectorAll(".episode-card")];
+  let visible=0;
+  cards.forEach(card=>{const match=!query||card.textContent.toLowerCase().includes(query);card.hidden=!match;if(match)visible++;});
+  if(episodeResults)episodeResults.textContent=query?visible+" matching episode(s).":cards.length+" published episode(s).";
+ };
+ if(episodeSearch)episodeSearch.addEventListener("input",filterEpisodeCards);
+
  const loadEpisodes=async()=>{
   if(!db)return;
   const grid=document.querySelector("[data-episode-grid]");
@@ -331,6 +344,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     const desc=document.createElement("p");desc.textContent=ep.description||"";
     const link=document.createElement("a");link.className="button button-gold";link.href=videoUrl||"https://www.youtube.com/@CrowRules_TV";link.target="_blank";link.rel="noopener";link.textContent="Watch episode ↗";
     card.append(category,heading,desc,link);grid.append(card);
+    filterEpisodeCards();
    });
   }catch(error){console.warn("Back Deck Live episodes could not load:",error.message);}
  };

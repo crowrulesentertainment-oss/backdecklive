@@ -229,6 +229,22 @@ document.addEventListener("DOMContentLoaded",()=>{
   let discoveredLiveVideoId="";
   const discoverActiveYouTubeLive=async()=>{
    try{
+    // Admin-selected Back Deck Live broadcast takes priority over automatic channel discovery.
+    let managed=null;
+    if(db){
+     const managedResult=await db.from("back_deck_live_broadcasts").select("title,youtube_video_id,status,is_featured,updated_at").eq("is_featured",true).eq("status","live").maybeSingle();
+     if(!managedResult.error)managed=managedResult.data;
+     else console.warn("Managed Back Deck Live broadcast lookup unavailable:",managedResult.error.message);
+    }
+    if(managed&&/^[A-Za-z0-9_-]{11}$/.test(managed.youtube_video_id||"")){
+     if(discoveredLiveVideoId!==managed.youtube_video_id){discoveredLiveVideoId=managed.youtube_video_id;showLiveVideoAndChat(managed.youtube_video_id);}
+     if(upcomingNodes.state){upcomingNodes.state.textContent="ON AIR NOW";upcomingNodes.state.classList.add("is-live");}
+     if(upcomingNodes.description)upcomingNodes.description.textContent="The Back Deck Live team has selected this broadcast — join the live conversation.";
+     if(liveStatusTitle)liveStatusTitle.textContent=managed.title||"Back Deck Live — CrowRules TV";
+     if(liveStatusMessage)liveStatusMessage.textContent="The featured Back Deck Live broadcast and its matching YouTube Live Chat are connected.";
+     if(liveChatStatus)liveChatStatus.textContent="Featured broadcast selected by the production team — video and chat are synced.";
+     return;
+    }
     const response=await fetch(BACK_DECK_LIVE_API+"?action=youtube-live",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
     const data=await response.json();
     if(!response.ok||data.ok===false)throw new Error(data.error||"Live broadcast lookup failed.");

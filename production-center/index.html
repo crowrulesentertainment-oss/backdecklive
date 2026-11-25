@@ -20,7 +20,7 @@
 <div id="globalMessage" class="notice hidden" role="status"></div>
 <div class="stats"><div class="stat"><strong id="statEpisodes">—</strong><span>Production plans</span></div><div class="stat"><strong id="statSchedule">—</strong><span>Upcoming broadcasts</span></div><div class="stat"><strong id="statGuests">—</strong><span>Active guest bookings</span></div><div class="stat"><strong id="statTasks">—</strong><span>Open production tasks</span></div></div>
 <nav class="tabs" aria-label="Production Center sections">
-<button class="btn tab active" data-tab="overview">Overview</button><button class="btn tab" data-tab="episodes">Episode planner</button><button class="btn tab" data-tab="schedule">Broadcast schedule</button><button class="btn tab" data-tab="rundown">Live rundown</button><button class="btn tab" data-tab="controlroom">Live Control Room</button><button class="btn tab" data-tab="technical">Technical preflight</button><button class="btn tab" data-tab="calendar">Weekly calendar</button><button class="btn tab" data-tab="reminders">Reminders</button><button class="btn tab" data-tab="guests">Guest bookings</button><button class="btn tab" data-tab="crew">Crew management</button><button class="btn tab" data-tab="tasks">Production checklist</button>
+<button class="btn tab active" data-tab="overview">Overview</button><button class="btn tab" data-tab="episodes">Episode planner</button><button class="btn tab" data-tab="schedule">Broadcast schedule</button><button class="btn tab" data-tab="rundown">Live rundown</button><button class="btn tab" data-tab="controlroom">Live Control Room</button><button class="btn tab" data-tab="livebroadcasts">YouTube Live Manager</button><button class="btn tab" data-tab="technical">Technical preflight</button><button class="btn tab" data-tab="calendar">Weekly calendar</button><button class="btn tab" data-tab="reminders">Reminders</button><button class="btn tab" data-tab="guests">Guest bookings</button><button class="btn tab" data-tab="crew">Crew management</button><button class="btn tab" data-tab="tasks">Production checklist</button>
 </nav>
 <section id="overview" class="section active"><div class="panel"><div class="section-head"><div><p class="eyebrow">At a glance</p><h2>Production dashboard</h2></div><button class="btn" id="refreshAll">Refresh workspace</button></div><div class="quick-grid"><div class="quick"><strong id="nextBroadcast">—</strong><span>Next scheduled broadcast</span></div><div class="quick"><strong id="readyEpisodes">—</strong><span>Episodes ready to record</span></div><div class="quick"><strong id="pendingGuests">—</strong><span>Guest requests to review</span></div></div><h3 style="margin-top:24px">Production rhythm</h3><p class="muted">Saturday · Back Deck Live broadcast at 3:00 PM Pacific. Use this center to prepare topics, research, record, edit, schedule and promote each gathering.</p></div><div class="panel"><div class="section-head"><div><p class="eyebrow">Next actions</p><h2>Open checklist</h2></div><button class="btn" data-jump="tasks">View all tasks</button></div><div id="overviewTasks" class="checklist"></div></div><div class="panel"><p class="eyebrow">Administration</p><h2>Administrator access</h2><p class="muted">Sign-in is validated against the existing Back Deck Live administrator allowlist. This workspace does not create admin accounts or grant privileges. Add or revoke authorized administrators through the established secure Supabase administration process.</p><div class="actions"><a class="btn primary" href="https://crowrulesentertainment-oss.github.io/crowrulesentertainment/back-deck-live/admin.html" target="_blank" rel="noopener">Open publishing &amp; media admin ↗</a><a class="btn" href="../admin/">Production Center entry page</a></div><p class="hint">Use the existing publishing admin for the public episode library, homepage featured video and original submissions inbox.</p></div></section>
 <section id="episodes" class="section"><div class="panel"><div class="section-head"><div><p class="eyebrow">Show development</p><h2 id="episodeHeading">Create episode plan</h2></div><button class="btn" id="resetEpisode">Clear form</button></div><form id="episodeForm"><input type="hidden" id="episodeId"><div class="grid">
@@ -52,6 +52,16 @@
 </div>
 <div class="panel"><div class="section-head"><div><p class="eyebrow">Producer's overview</p><h2>Broadcast readiness</h2></div><span class="pill" id="crReadinessBadge">Checking</span></div><div class="stats" id="crReadinessStats"></div><div id="crReadinessList" class="checklist"></div><p class="hint">Readiness is an operational snapshot, not an automatic broadcast authorization. Confirm audio, video, stream destination and crew communications before going live.</p></div>
 <div class="panel"><div class="section-head"><div><p class="eyebrow">Segment monitor</p><h2>Live rundown tracking</h2></div><button class="btn" data-jump="rundown">Manage rundown ↗</button></div><div id="crSegmentList" class="rundown-list"><p class="empty">Choose an episode to load its segments.</p></div></div>
+<div class="panel">
+ <div class="section-head"><div><p class="eyebrow">YouTube broadcast switching</p><h2>Add a live stream to the player</h2><p class="muted">Paste a YouTube watch, live, or youtu.be URL. Set one broadcast as featured to send it to the public Back Deck Live player and matching live chat.</p></div><span class="pill warn" id="bdlLiveManagerStatus">STANDBY</span></div>
+ <form id="bdlLiveBroadcastForm"><input type="hidden" id="bdlLiveBroadcastId"><div class="grid">
+  <div class="field"><label for="bdlLiveTitle">Broadcast title *</label><input id="bdlLiveTitle" maxlength="180" required placeholder="Back Deck Live — Saturday Gathering"></div>
+  <div class="field"><label for="bdlLiveUrl">YouTube livestream URL *</label><input id="bdlLiveUrl" type="url" maxlength="500" required placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX"></div>
+  <div class="field"><label for="bdlLiveStatus">Broadcast status</label><select id="bdlLiveStatus"><option value="live">LIVE — send to player</option><option value="upcoming">Upcoming — save for later</option><option value="ended">Ended — archive from player</option></select></div>
+  <div class="field"><label for="bdlLiveFeatured">Public player</label><label style="display:flex;gap:9px;align-items:center;margin-top:8px"><input id="bdlLiveFeatured" type="checkbox" style="width:18px;min-height:18px"> Set as featured broadcast</label></div>
+ </div><div class="actions" style="margin-top:14px"><button class="btn primary" type="submit" id="bdlLiveSave">Save broadcast</button><button class="btn" type="button" id="bdlLiveReset">Clear form</button><button class="btn" type="button" id="bdlLiveRefresh">Refresh list</button></div><p class="hint">The featured LIVE broadcast appears on the public Watch Live page. YouTube chat requires the stream to be live and allows embedding on desktop browsers. The chat frame may not be available on mobile web.</p></form>
+</div>
+<div class="panel"><div class="section-head"><div><p class="eyebrow">Saved streams</p><h2>Broadcast library</h2></div><span class="hint" id="bdlLiveCount">Loading…</span></div><div class="table-wrap"><table><thead><tr><th>Broadcast</th><th>Video ID</th><th>Status</th><th>Public player</th><th>Actions</th></tr></thead><tbody id="bdlLiveRows"><tr><td colspan="5" class="empty">Loading saved broadcasts…</td></tr></tbody></table></div></div>
 </section><section id="technical" class="section">
 <div class="panel"><div class="section-head"><div><p class="eyebrow">Broadcast engineering · operator verification</p><h2>Technical Broadcast Panel</h2><p class="muted">Preflight checks for the Saturday 3:00 PM Pacific stream. Checks are operator-confirmed; this page does not directly inspect OBS, encoder telemetry or YouTube ingest.</p></div><span class="pill warn" id="techOverall">NOT VERIFIED</span></div>
 <div class="stats">
@@ -325,6 +335,50 @@ $("rundownTemplate").onclick=async()=>{
  const payload=names.map((x,i)=>({production_episode_id:ep,broadcast_schedule_id:$("rundownSchedule").value||null,segment_title:x[0],segment_type:x[1],duration_minutes:x[2],sort_order:(i+1)*10,status:"pending",created_by:user.id}));
  const r=await db.from("back_deck_show_rundown").insert(payload);if(r.error)msg(r.error.message,"error");else{msg("Six-part show rundown created.");await loadRundown();}
 };
+
+// YouTube Live Manager — admin-only CRUD; public player reads the featured row.
+let bdlLiveBroadcasts=[];
+function bdlVideoId(value){
+ try{const u=new URL(String(value||"").trim());let id=u.searchParams.get("v");
+  if(!id&&u.hostname.toLowerCase()==="youtu.be")id=u.pathname.split("/").filter(Boolean)[0];
+  if(!id&&/(^|\\.)youtube\\.com$/i.test(u.hostname)){const parts=u.pathname.split("/").filter(Boolean);if(["live","embed","shorts"].includes(parts[0]))id=parts[1];}
+  return id&&/^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
+ }catch{return "";}
+}
+function bdlResetLiveForm(){$("bdlLiveBroadcastForm").reset();$("bdlLiveBroadcastId").value="";$("bdlLiveStatus").value="live";$("bdlLiveManagerStatus").textContent="STANDBY";}
+async function bdlLoadLiveBroadcasts(){
+ const {data,error}=await db.from("back_deck_live_broadcasts").select("*").order("updated_at",{ascending:false});
+ if(error)throw error;bdlLiveBroadcasts=data||[];
+ $("bdlLiveCount").textContent=bdlLiveBroadcasts.length+" saved broadcast(s)";
+ $("bdlLiveManagerStatus").textContent=bdlLiveBroadcasts.some(x=>x.is_featured&&x.status==="live")?"ON AIR":"STANDBY";
+ $("bdlLiveRows").innerHTML=bdlLiveBroadcasts.map(x=>'<tr><td><strong>'+safe(x.title)+'</strong><br><a href="https://www.youtube.com/watch?v='+encodeURIComponent(x.youtube_video_id)+'" target="_blank" rel="noopener">Open on YouTube ↗</a></td><td><code>'+safe(x.youtube_video_id)+'</code></td><td><span class="pill '+(x.status==="live"?"":"warn")+'">'+safe(x.status.toUpperCase())+'</span></td><td>'+(x.is_featured?'<span class="pill">FEATURED</span>':'—')+'</td><td><div class="actions">'+(!x.is_featured||x.status!=="live"?'<button class="btn small primary" data-bdl-live-activate="'+x.id+'">Send to player</button>':'<span class="pill">On public player</span>')+'<button class="btn small" data-bdl-live-edit="'+x.id+'">Edit</button><button class="btn small danger" data-bdl-live-delete="'+x.id+'">Delete</button></div></td></tr>').join("")||'<tr><td colspan="5" class="empty">No broadcasts saved yet. Add your first YouTube Live URL above.</td></tr>';
+}
+$("bdlLiveBroadcastForm").addEventListener("submit",async e=>{
+ e.preventDefault();const id=$("bdlLiveBroadcastId").value,title=$("bdlLiveTitle").value.trim(),url=$("bdlLiveUrl").value.trim(),videoId=bdlVideoId(url),status=$("bdlLiveStatus").value,featured=$("bdlLiveFeatured").checked;
+ if(!videoId){msg("Paste a valid YouTube watch, live, embed or youtu.be URL.","error");return;}
+ if(featured&&status!=="live"){$("bdlLiveStatus").value="live";msg("A featured broadcast must be marked LIVE. Status changed to LIVE.");}
+ const payload={title,youtube_video_id:videoId,status:featured?"live":status,is_featured:featured,updated_at:new Date().toISOString()};
+ try{
+  if(featured){const {error}=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("is_featured",true);if(error)throw error;}
+  const result=id?await db.from("back_deck_live_broadcasts").update(payload).eq("id",id):await db.from("back_deck_live_broadcasts").insert({...payload,created_by:user.id});
+  if(result.error)throw result.error;
+  msg(featured?"Broadcast saved and sent to the public player.":"Broadcast saved to your library.");
+  bdlResetLiveForm();await bdlLoadLiveBroadcasts();
+ }catch(err){msg("Could not save broadcast: "+err.message,"error");}
+});
+$("bdlLiveReset").onclick=bdlResetLiveForm;
+$("bdlLiveRefresh").onclick=()=>bdlLoadLiveBroadcasts().catch(e=>msg("Could not load broadcasts: "+e.message,"error"));
+$("bdlLiveRows").addEventListener("click",async e=>{
+ const activate=e.target.closest("[data-bdl-live-activate]"),edit=e.target.closest("[data-bdl-live-edit]"),del=e.target.closest("[data-bdl-live-delete]");
+ if(activate){const x=bdlLiveBroadcasts.find(y=>y.id===activate.dataset.bdlLiveActivate);if(!x)return;
+  try{const clear=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("is_featured",true);if(clear.error)throw clear.error;
+   const set=await db.from("back_deck_live_broadcasts").update({is_featured:true,status:"live",updated_at:new Date().toISOString()}).eq("id",x.id);if(set.error)throw set.error;
+   msg("Broadcast is now featured on the public player.");await bdlLoadLiveBroadcasts();
+  }catch(err){msg("Could not switch the public broadcast: "+err.message,"error");}}
+ if(edit){const x=bdlLiveBroadcasts.find(y=>y.id===edit.dataset.bdlLiveEdit);if(!x)return;$("bdlLiveBroadcastId").value=x.id;$("bdlLiveTitle").value=x.title;$("bdlLiveUrl").value="https://www.youtube.com/watch?v="+x.youtube_video_id;$("bdlLiveStatus").value=x.status;$("bdlLiveFeatured").checked=!!x.is_featured;$("bdlLiveTitle").scrollIntoView({behavior:"smooth",block:"center"});}
+ if(del&&confirm("Delete this saved broadcast?")){const {error}=await db.from("back_deck_live_broadcasts").delete().eq("id",del.dataset.bdlLiveDelete);if(error)msg("Delete failed: "+error.message,"error");else{msg("Broadcast deleted.");await bdlLoadLiveBroadcasts();}}
+});
+
 async function refreshAll(){try{await Promise.all([loadEpisodes(),loadSchedule(),loadGuests(),loadCrew(),loadTasks(),loadRundown()]);calendarRender();reminderRender();crPopulate();crRender();if(notificationTimer)clearInterval(notificationTimer);notificationTimer=setInterval(reminderRender,60000);msg("Production Center is up to date.","");}catch(e){msg("Could not load all production data: "+e.message,"error");}}
 $("weeklyTemplate").onclick=async()=>{
  const template=[

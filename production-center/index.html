@@ -384,27 +384,27 @@ async function bdlLoadLiveBroadcasts(){
  const {data,error}=await db.from("back_deck_live_broadcasts").select("*").order("updated_at",{ascending:false});
  if(error)throw error;bdlLiveBroadcasts=data||[];
  $("bdlLiveCount").textContent=bdlLiveBroadcasts.length+" saved broadcast(s)";
- $("bdlLiveManagerStatus").textContent=bdlLiveBroadcasts.some(x=>x.is_featured&&x.status==="live")?"ON AIR":"STANDBY";
+ $("bdlLiveManagerStatus").textContent=bdlLiveBroadcasts.some(x=>x.is_featured&&x.status==="live")?"ON AIR":(bdlLiveBroadcasts.some(x=>x.is_featured&&x.status==="upcoming")?"SCHEDULED":"STANDBY");
  $("bdlLiveRows").innerHTML=bdlLiveBroadcasts.map(x=>'<tr><td><strong>'+safe(x.title)+'</strong><br><a href="https://www.youtube.com/watch?v='+encodeURIComponent(x.youtube_video_id)+'" target="_blank" rel="noopener">Open on YouTube ↗</a></td><td>'+safe(bdlFormatPacific(x.scheduled_start_at))+(x.scheduled_end_at?'<br><span class="hint">Ends '+safe(bdlFormatPacific(x.scheduled_end_at))+'</span>':'')+'</td><td><code>'+safe(x.youtube_video_id)+'</code></td><td><span class="pill '+(x.status==="live"?"":"warn")+'">'+safe(x.status.toUpperCase())+'</span></td><td>'+(x.is_featured?'<span class="pill">FEATURED</span>':'—')+'</td><td><div class="actions">'+(x.status==="live"&&!x.is_featured?'<button class="btn small primary" data-bdl-live-activate="'+x.id+'">Send to player</button>':(x.is_featured&&x.status==="live"?'<span class="pill">On public player</span>':'—'))+'<button class="btn small" data-bdl-live-edit="'+x.id+'">Edit</button><button class="btn small danger" data-bdl-live-delete="'+x.id+'">Delete</button></div></td></tr>').join("")||'<tr><td colspan="6" class="empty">No broadcasts saved yet. Add your first YouTube Live URL above.</td></tr>';
 }
 $("bdlLiveBroadcastForm").addEventListener("submit",async e=>{
  e.preventDefault();
  const id=$("bdlLiveBroadcastId").value,title=$("bdlLiveTitle").value.trim(),url=$("bdlLiveUrl").value.trim(),videoId=bdlVideoId(url),status=$("bdlLiveStatus").value,featured=$("bdlLiveFeatured").checked;
  if(!videoId){msg("Paste a valid YouTube watch, live, embed or youtu.be URL.","error");return;}
- if(featured&&status!=="live"){msg("Only a LIVE broadcast can be featured on the public player. Change the status to LIVE or save it as Upcoming without featuring it.","error");return;}
+ if(featured&&status==="ended"){msg("An ended broadcast cannot be featured. Clear the featured option or choose LIVE / Upcoming.","error");return;}
  let scheduledStartAt,scheduledEndAt;
  try{
   scheduledStartAt=bdlPacificInputToIso($("bdlLiveStart").value);
   scheduledEndAt=bdlPacificInputToIso($("bdlLiveEnd").value);
   if(scheduledStartAt&&scheduledEndAt&&new Date(scheduledEndAt)<=new Date(scheduledStartAt))throw new Error("The scheduled end must be later than the scheduled start.");
  }catch(err){msg(err.message,"error");return;}
- const payload={title,youtube_video_id:videoId,status,is_featured:featured,scheduled_start_at:scheduledStartAt,scheduled_end_at:scheduledEndAt,updated_at:new Date().toISOString()};
+ const payload={title,youtube_video_id:videoId,status,is_featured:featured&&status!=="ended",scheduled_start_at:scheduledStartAt,scheduled_end_at:scheduledEndAt,updated_at:new Date().toISOString()};
  try{
   if(featured){const {error}=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("is_featured",true);if(error)throw error;}
   else if(id&&bdlLiveBroadcasts.some(x=>x.id===id&&x.is_featured)){const clear=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("id",id);if(clear.error)throw clear.error;}
   const result=id?await db.from("back_deck_live_broadcasts").update(payload).eq("id",id):await db.from("back_deck_live_broadcasts").insert({...payload,created_by:user.id});
   if(result.error)throw result.error;
-  msg(featured?"Broadcast saved and sent to the public player.":"Broadcast saved to your library.");
+  msg(featured&&status==="live"?"Broadcast saved and sent to the public player.":(featured&&status==="upcoming"?"Upcoming broadcast featured on the public schedule. It will not play until marked LIVE.":"Broadcast saved to your library."));
   bdlResetLiveForm();await bdlLoadLiveBroadcasts();
  }catch(err){msg("Could not save broadcast: "+err.message,"error");}
 });

@@ -160,15 +160,11 @@ document.addEventListener("DOMContentLoaded",()=>{
    return true;
   };
   if(liveStatusPlayer){
-   const frame=document.createElement("iframe");
-   frame.src="https://www.youtube-nocookie.com/embed/zLQ5Zs1_z6U?rel=0&modestbranding=1";
-   frame.title="Back Deck Live — CrowRules TV live stream";
-   frame.loading="lazy";frame.referrerPolicy="strict-origin-when-cross-origin";
-   frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-   frame.allowFullscreen=true;
-   liveStatusPlayer.replaceChildren(frame);
-   liveStatusPlayer.hidden=false;
-   showLiveVideoAndChat("zLQ5Zs1_z6U");
+   liveStatusPlayer.replaceChildren();
+   const standby=document.createElement("div");standby.className="youtube-chat-empty";
+   const heading=document.createElement("strong");heading.textContent="The Back Deck Live player is standing by.";
+   const note=document.createElement("p");note.textContent="The featured live broadcast will appear here when the production team sends it on air.";
+   standby.append(heading,note);liveStatusPlayer.append(standby);liveStatusPlayer.hidden=false;
   }
   if(liveConnectForm){
    liveConnectForm.addEventListener("submit",event=>{
@@ -184,6 +180,7 @@ document.addEventListener("DOMContentLoaded",()=>{
    const queryVideo=params.get("video")||params.get("v");
    if(queryVideo&&/^[A-Za-z0-9_-]{11}$/.test(queryVideo))showLiveVideoAndChat(queryVideo);
   }
+  let managedUpcomingBroadcast=null;
   const upcomingNodes={
    state:document.querySelector("[data-upcoming-live-state]"),
    date:document.querySelector("[data-upcoming-live-date]"),
@@ -209,7 +206,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   };
   const updateUpcomingLive=()=>{
    if(!upcomingNodes.days)return;
-   const now=new Date(),target=getNextBackDeckShow(),remaining=Math.max(0,target-now),total=Math.floor(remaining/1000);
+   const now=new Date(),target=managedUpcomingBroadcast?.scheduled_start_at?new Date(managedUpcomingBroadcast.scheduled_start_at):getNextBackDeckShow(),remaining=Math.max(0,target-now),total=Math.floor(remaining/1000);
    const dateLabel=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"long",month:"long",day:"numeric"}).format(target);
    const timeLabel=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(target);
    upcomingNodes.date.textContent=dateLabel+" · "+timeLabel;
@@ -217,7 +214,7 @@ document.addEventListener("DOMContentLoaded",()=>{
    upcomingNodes.hours.textContent=String(Math.floor(total%86400/3600)).padStart(2,"0");
    upcomingNodes.minutes.textContent=String(Math.floor(total%3600/60)).padStart(2,"0");
    upcomingNodes.seconds.textContent=String(total%60).padStart(2,"0");
-   if(upcomingNodes.label)upcomingNodes.label.textContent=total===0?"Showtime!": "Until the next Saturday gathering.";
+   if(upcomingNodes.label)upcomingNodes.label.textContent=total===0?"Showtime!":(managedUpcomingBroadcast?"Until this scheduled Back Deck Live broadcast.":"Until the next Saturday gathering.");
    if(upcomingNodes.calendar){
     const end=new Date(target.getTime()+60*60*1000);
     const stamp=date=>new Intl.DateTimeFormat("en-CA",{timeZone:"UTC",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(date).replace(/[^0-9]/g,"").slice(0,12);
@@ -230,11 +227,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   const discoverActiveYouTubeLive=async()=>{
    try{
     // Admin-selected Back Deck Live broadcast takes priority over automatic channel discovery.
-    let managed=null;
+    let managed=null;managedUpcomingBroadcast=null;
     if(db){
-     const managedResult=await db.from("back_deck_live_broadcast_public").select("title,youtube_video_id,status,is_featured,updated_at").eq("is_featured",true).eq("status","live").maybeSingle();
+     const managedResult=await db.from("back_deck_live_broadcast_public").select("title,youtube_video_id,status,is_featured,scheduled_start_at,scheduled_end_at,updated_at").eq("is_featured",true).eq("status","live").maybeSingle();
      if(!managedResult.error)managed=managedResult.data;
      else console.warn("Managed Back Deck Live broadcast lookup unavailable:",managedResult.error.message);
+     const upcomingResult=await db.from("back_deck_live_broadcast_public").select("title,youtube_video_id,status,is_featured,scheduled_start_at,scheduled_end_at").eq("is_featured",true).eq("status","upcoming").not("scheduled_start_at","is",null).order("scheduled_start_at",{ascending:true}).limit(1).maybeSingle();
+     if(!upcomingResult.error&&upcomingResult.data)managedUpcomingBroadcast=upcomingResult.data;
     }
     if(managed&&/^[A-Za-z0-9_-]{11}$/.test(managed.youtube_video_id||"")){
      if(discoveredLiveVideoId!==managed.youtube_video_id){discoveredLiveVideoId=managed.youtube_video_id;showLiveVideoAndChat(managed.youtube_video_id);}
@@ -244,6 +243,14 @@ document.addEventListener("DOMContentLoaded",()=>{
      if(liveStatusMessage)liveStatusMessage.textContent="The featured Back Deck Live broadcast and its matching YouTube Live Chat are connected.";
      if(liveChatStatus)liveChatStatus.textContent="Featured broadcast selected by the production team — video and chat are synced.";
      return;
+    }
+    if(managedUpcomingBroadcast){
+     if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}
+     const scheduled=managedUpcomingBroadcast.scheduled_start_at?new Date(managedUpcomingBroadcast.scheduled_start_at):null;
+     if(scheduled&&upcomingNodes.date)upcomingNodes.date.textContent=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"long",month:"long",day:"numeric",year:"numeric"}).format(scheduled)+" · "+new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(scheduled);
+     const heading=document.querySelector("#upcoming-live-title");if(heading)heading.textContent=managedUpcomingBroadcast.title||"The next show is on the deck.";
+     if(upcomingNodes.description)upcomingNodes.description.textContent="This broadcast is scheduled by the Back Deck Live production team. The live player will switch when the producer marks it LIVE.";
+     if(upcomingNodes.label)upcomingNodes.label.textContent="Countdown to the scheduled broadcast.";
     }
     const response=await fetch(BACK_DECK_LIVE_API+"?action=youtube-live",{method:"GET",headers:{"Accept":"application/json"},cache:"no-store"});
     const data=await response.json();
@@ -256,9 +263,12 @@ document.addEventListener("DOMContentLoaded",()=>{
      if(liveStatusMessage)liveStatusMessage.textContent="An active CrowRules TV broadcast was found automatically. The video and matching live chat are connected.";
      if(liveChatStatus)liveChatStatus.textContent="Active broadcast detected automatically — video and live chat are synced.";
     }else if(!discoveredLiveVideoId){
-     if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}
-     if(upcomingNodes.description)upcomingNodes.description.textContent="Join us every Saturday for conversation, community, and a little time on the deck.";
-     if(liveStatusMessage)liveStatusMessage.textContent="No active public live broadcast is detected right now. This player will connect automatically when Back Deck Live goes live.";
+     if(!managedUpcomingBroadcast){
+      if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}
+      if(upcomingNodes.description)upcomingNodes.description.textContent="Join us every Saturday for conversation, community, and a little time on the deck.";
+      const heading=document.querySelector("#upcoming-live-title");if(heading)heading.textContent="The next show is on the deck.";
+     }
+     if(liveStatusMessage)liveStatusMessage.textContent="No active featured Back Deck Live stream is detected right now. The public player is standing by.";
      if(liveChatStatus)liveChatStatus.textContent="Waiting for the next live broadcast. Video and chat will connect automatically.";
     }else{
      if(upcomingNodes.state){upcomingNodes.state.textContent="UP NEXT";upcomingNodes.state.classList.remove("is-live");}

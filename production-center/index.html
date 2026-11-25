@@ -341,7 +341,7 @@ let bdlLiveBroadcasts=[];
 function bdlVideoId(value){
  try{const u=new URL(String(value||"").trim());let id=u.searchParams.get("v");
   if(!id&&u.hostname.toLowerCase()==="youtu.be")id=u.pathname.split("/").filter(Boolean)[0];
-  if(!id&&/(^|\\.)youtube\\.com$/i.test(u.hostname)){const parts=u.pathname.split("/").filter(Boolean);if(["live","embed","shorts"].includes(parts[0]))id=parts[1];}
+  if(!id&&/(^|\.)youtube\.com$/i.test(u.hostname)){const parts=u.pathname.split("/").filter(Boolean);if(["live","embed","shorts"].includes(parts[0]))id=parts[1];}
   return id&&/^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
  }catch{return "";}
 }
@@ -379,7 +379,7 @@ $("bdlLiveRows").addEventListener("click",async e=>{
  if(del&&confirm("Delete this saved broadcast?")){const {error}=await db.from("back_deck_live_broadcasts").delete().eq("id",del.dataset.bdlLiveDelete);if(error)msg("Delete failed: "+error.message,"error");else{msg("Broadcast deleted.");await bdlLoadLiveBroadcasts();}}
 });
 
-async function refreshAll(){try{await Promise.all([loadEpisodes(),loadSchedule(),loadGuests(),loadCrew(),loadTasks(),loadRundown(),bdlLoadLiveBroadcasts()]);calendarRender();reminderRender();crPopulate();crRender();if(notificationTimer)clearInterval(notificationTimer);notificationTimer=setInterval(reminderRender,60000);msg("Production Center is up to date.","");}catch(e){msg("Could not load all production data: "+e.message,"error");}}
+async function refreshAll(){try{await Promise.all([loadEpisodes(),loadSchedule(),loadGuests(),loadCrew(),loadTasks(),loadRundown()]);try{await bdlLoadLiveBroadcasts()}catch(liveError){$("bdlLiveCount").textContent="Database setup required";$("bdlLiveRows").innerHTML='<tr><td colspan="5" class="empty">Run supabase/live-broadcast-manager.sql in Supabase to enable saved broadcasts.</td></tr>';}calendarRender();reminderRender();crPopulate();crRender();if(notificationTimer)clearInterval(notificationTimer);notificationTimer=setInterval(reminderRender,60000);msg("Production Center is up to date.","");}catch(e){msg("Could not load all production data: "+e.message,"error");}}
 $("weeklyTemplate").onclick=async()=>{
  const template=[
  ["Choose next week's topic","planning","high"],

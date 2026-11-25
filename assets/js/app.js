@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     // Admin-selected Back Deck Live broadcast takes priority over automatic channel discovery.
     let managed=null;
     if(db){
-     const managedResult=await db.from("back_deck_live_broadcasts").select("title,youtube_video_id,status,is_featured,updated_at").eq("is_featured",true).eq("status","live").maybeSingle();
+     const managedResult=await db.from("back_deck_live_broadcast_public").select("title,youtube_video_id,status,is_featured,updated_at").eq("is_featured",true).eq("status","live").maybeSingle();
      if(!managedResult.error)managed=managedResult.data;
      else console.warn("Managed Back Deck Live broadcast lookup unavailable:",managedResult.error.message);
     }

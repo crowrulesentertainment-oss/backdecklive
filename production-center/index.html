@@ -379,7 +379,7 @@ $("bdlLiveRows").addEventListener("click",async e=>{
  if(del&&confirm("Delete this saved broadcast?")){const {error}=await db.from("back_deck_live_broadcasts").delete().eq("id",del.dataset.bdlLiveDelete);if(error)msg("Delete failed: "+error.message,"error");else{msg("Broadcast deleted.");await bdlLoadLiveBroadcasts();}}
 });
 
-async function refreshAll(){try{await Promise.all([loadEpisodes(),loadSchedule(),loadGuests(),loadCrew(),loadTasks(),loadRundown()]);calendarRender();reminderRender();crPopulate();crRender();if(notificationTimer)clearInterval(notificationTimer);notificationTimer=setInterval(reminderRender,60000);msg("Production Center is up to date.","");}catch(e){msg("Could not load all production data: "+e.message,"error");}}
+async function refreshAll(){try{await Promise.all([loadEpisodes(),loadSchedule(),loadGuests(),loadCrew(),loadTasks(),loadRundown(),bdlLoadLiveBroadcasts()]);calendarRender();reminderRender();crPopulate();crRender();if(notificationTimer)clearInterval(notificationTimer);notificationTimer=setInterval(reminderRender,60000);msg("Production Center is up to date.","");}catch(e){msg("Could not load all production data: "+e.message,"error");}}
 $("weeklyTemplate").onclick=async()=>{
  const template=[
  ["Choose next week's topic","planning","high"],

@@ -59,10 +59,12 @@
   <div class="field"><label for="bdlLiveTitle">Broadcast title *</label><input id="bdlLiveTitle" maxlength="180" required placeholder="Back Deck Live — Saturday Gathering"></div>
   <div class="field"><label for="bdlLiveUrl">YouTube livestream URL *</label><input id="bdlLiveUrl" type="url" maxlength="500" required placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX"></div>
   <div class="field"><label for="bdlLiveStatus">Broadcast status</label><select id="bdlLiveStatus"><option value="live">LIVE — send to player</option><option value="upcoming">Upcoming — save for later</option><option value="ended">Ended — archive from player</option></select></div>
-  <div class="field"><label for="bdlLiveFeatured">Public player</label><label style="display:flex;gap:9px;align-items:center;margin-top:8px"><input id="bdlLiveFeatured" type="checkbox" style="width:18px;min-height:18px"> Set as featured broadcast</label></div>
+  <div class="field"><label for="bdlLiveStart">Scheduled start · Pacific Time</label><input id="bdlLiveStart" type="datetime-local"><span class="hint">Tacoma time · stored with the correct Pacific daylight / standard offset</span></div>
+  <div class="field"><label for="bdlLiveEnd">Scheduled end · Pacific Time (optional)</label><input id="bdlLiveEnd" type="datetime-local"></div>
+  <div class="field"><label for="bdlLiveFeatured">Public player</label><label style="display:flex;gap:9px;align-items:center;margin-top:8px"><input id="bdlLiveFeatured" type="checkbox" style="width:18px;min-height:18px"> Set as featured broadcast</label><span class="hint">Only a LIVE broadcast can be sent to the public player.</span></div>
  </div><div class="actions" style="margin-top:14px"><button class="btn primary" type="submit" id="bdlLiveSave">Save broadcast</button><button class="btn" type="button" id="bdlLiveReset">Clear form</button><button class="btn" type="button" id="bdlLiveRefresh">Refresh list</button></div><p class="hint">The featured LIVE broadcast appears on the public Watch Live page. YouTube chat requires the stream to be live and allows embedding on desktop browsers. The chat frame may not be available on mobile web.</p></form>
 </div>
-<div class="panel"><div class="section-head"><div><p class="eyebrow">Saved streams</p><h2>Broadcast library</h2></div><span class="hint" id="bdlLiveCount">Loading…</span></div><div class="table-wrap"><table><thead><tr><th>Broadcast</th><th>Video ID</th><th>Status</th><th>Public player</th><th>Actions</th></tr></thead><tbody id="bdlLiveRows"><tr><td colspan="5" class="empty">Loading saved broadcasts…</td></tr></tbody></table></div></div>
+<div class="panel"><div class="section-head"><div><p class="eyebrow">Saved streams</p><h2>Broadcast library</h2></div><span class="hint" id="bdlLiveCount">Loading…</span></div><div class="table-wrap"><table><thead><tr><th>Broadcast</th><th>Scheduled · Pacific</th><th>Video ID</th><th>Status</th><th>Public player</th><th>Actions</th></tr></thead><tbody id="bdlLiveRows"><tr><td colspan="6" class="empty">Loading saved broadcasts…</td></tr></tbody></table></div></div>
 </section><section id="technical" class="section">
 <div class="panel"><div class="section-head"><div><p class="eyebrow">Broadcast engineering · operator verification</p><h2>Technical Broadcast Panel</h2><p class="muted">Preflight checks for the Saturday 3:00 PM Pacific stream. Checks are operator-confirmed; this page does not directly inspect OBS, encoder telemetry or YouTube ingest.</p></div><span class="pill warn" id="techOverall">NOT VERIFIED</span></div>
 <div class="stats">
@@ -345,21 +347,61 @@ function bdlVideoId(value){
   return id&&/^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
  }catch{return "";}
 }
-function bdlResetLiveForm(){$("bdlLiveBroadcastForm").reset();$("bdlLiveBroadcastId").value="";$("bdlLiveStatus").value="live";$("bdlLiveManagerStatus").textContent="STANDBY";}
+function bdlPacificInputToIso(value){
+ if(!value)return null;
+ const match=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+ if(!match)throw new Error("Enter a valid scheduled date and time.");
+ const [year,month,day,hour,minute]=match.slice(1).map(Number);
+ const target=Date.UTC(year,month-1,day,hour,minute);
+ const fmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"});
+ const partsAt=date=>Object.fromEntries(fmt.formatToParts(date).map(x=>[x.type,x.value]));
+ let guess=target;
+ for(let i=0;i<3;i++){
+  const z=partsAt(new Date(guess));
+  const represented=Date.UTC(+z.year,+z.month-1,+z.day,+z.hour,+z.minute,+z.second);
+  guess+=target-represented;
+ }
+ const check=partsAt(new Date(guess));
+ if(+check.year!==year||+check.month!==month||+check.day!==day||+check.hour!==hour||+check.minute!==minute)throw new Error("That local time does not exist in Pacific Time because of the daylight-saving clock change. Choose another time.");
+ return new Date(guess).toISOString();
+}
+function bdlIsoToPacificInput(value){
+ if(!value)return "";
+ const d=new Date(value);if(Number.isNaN(d.getTime()))return "";
+ const parts=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"America/Los_Angeles",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(d).map(x=>[x.type,x.value]));
+ return parts.year+"-"+parts.month+"-"+parts.day+"T"+parts.hour+":"+parts.minute;
+}
+function bdlFormatPacific(value){
+ if(!value)return "Not scheduled";
+ const d=new Date(value);if(Number.isNaN(d.getTime()))return "Date not set";
+ return new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"}).format(d);
+}
+function bdlResetLiveForm(){
+ $("bdlLiveBroadcastForm").reset();$("bdlLiveBroadcastId").value="";$("bdlLiveStatus").value="live";
+ $("bdlLiveManagerStatus").textContent="STANDBY";
+}
 async function bdlLoadLiveBroadcasts(){
  const {data,error}=await db.from("back_deck_live_broadcasts").select("*").order("updated_at",{ascending:false});
  if(error)throw error;bdlLiveBroadcasts=data||[];
  $("bdlLiveCount").textContent=bdlLiveBroadcasts.length+" saved broadcast(s)";
  $("bdlLiveManagerStatus").textContent=bdlLiveBroadcasts.some(x=>x.is_featured&&x.status==="live")?"ON AIR":"STANDBY";
- $("bdlLiveRows").innerHTML=bdlLiveBroadcasts.map(x=>'<tr><td><strong>'+safe(x.title)+'</strong><br><a href="https://www.youtube.com/watch?v='+encodeURIComponent(x.youtube_video_id)+'" target="_blank" rel="noopener">Open on YouTube ↗</a></td><td><code>'+safe(x.youtube_video_id)+'</code></td><td><span class="pill '+(x.status==="live"?"":"warn")+'">'+safe(x.status.toUpperCase())+'</span></td><td>'+(x.is_featured?'<span class="pill">FEATURED</span>':'—')+'</td><td><div class="actions">'+(!x.is_featured||x.status!=="live"?'<button class="btn small primary" data-bdl-live-activate="'+x.id+'">Send to player</button>':'<span class="pill">On public player</span>')+'<button class="btn small" data-bdl-live-edit="'+x.id+'">Edit</button><button class="btn small danger" data-bdl-live-delete="'+x.id+'">Delete</button></div></td></tr>').join("")||'<tr><td colspan="5" class="empty">No broadcasts saved yet. Add your first YouTube Live URL above.</td></tr>';
+ $("bdlLiveRows").innerHTML=bdlLiveBroadcasts.map(x=>'<tr><td><strong>'+safe(x.title)+'</strong><br><a href="https://www.youtube.com/watch?v='+encodeURIComponent(x.youtube_video_id)+'" target="_blank" rel="noopener">Open on YouTube ↗</a></td><td>'+safe(bdlFormatPacific(x.scheduled_start_at))+(x.scheduled_end_at?'<br><span class="hint">Ends '+safe(bdlFormatPacific(x.scheduled_end_at))+'</span>':'')+'</td><td><code>'+safe(x.youtube_video_id)+'</code></td><td><span class="pill '+(x.status==="live"?"":"warn")+'">'+safe(x.status.toUpperCase())+'</span></td><td>'+(x.is_featured?'<span class="pill">FEATURED</span>':'—')+'</td><td><div class="actions">'+(x.status==="live"&&!x.is_featured?'<button class="btn small primary" data-bdl-live-activate="'+x.id+'">Send to player</button>':(x.is_featured&&x.status==="live"?'<span class="pill">On public player</span>':'—'))+'<button class="btn small" data-bdl-live-edit="'+x.id+'">Edit</button><button class="btn small danger" data-bdl-live-delete="'+x.id+'">Delete</button></div></td></tr>').join("")||'<tr><td colspan="6" class="empty">No broadcasts saved yet. Add your first YouTube Live URL above.</td></tr>';
 }
 $("bdlLiveBroadcastForm").addEventListener("submit",async e=>{
- e.preventDefault();const id=$("bdlLiveBroadcastId").value,title=$("bdlLiveTitle").value.trim(),url=$("bdlLiveUrl").value.trim(),videoId=bdlVideoId(url),status=$("bdlLiveStatus").value,featured=$("bdlLiveFeatured").checked;
+ e.preventDefault();
+ const id=$("bdlLiveBroadcastId").value,title=$("bdlLiveTitle").value.trim(),url=$("bdlLiveUrl").value.trim(),videoId=bdlVideoId(url),status=$("bdlLiveStatus").value,featured=$("bdlLiveFeatured").checked;
  if(!videoId){msg("Paste a valid YouTube watch, live, embed or youtu.be URL.","error");return;}
- if(featured&&status!=="live"){$("bdlLiveStatus").value="live";msg("A featured broadcast must be marked LIVE. Status changed to LIVE.");}
- const payload={title,youtube_video_id:videoId,status:featured?"live":status,is_featured:featured,updated_at:new Date().toISOString()};
+ if(featured&&status!=="live"){msg("Only a LIVE broadcast can be featured on the public player. Change the status to LIVE or save it as Upcoming without featuring it.","error");return;}
+ let scheduledStartAt,scheduledEndAt;
+ try{
+  scheduledStartAt=bdlPacificInputToIso($("bdlLiveStart").value);
+  scheduledEndAt=bdlPacificInputToIso($("bdlLiveEnd").value);
+  if(scheduledStartAt&&scheduledEndAt&&new Date(scheduledEndAt)<=new Date(scheduledStartAt))throw new Error("The scheduled end must be later than the scheduled start.");
+ }catch(err){msg(err.message,"error");return;}
+ const payload={title,youtube_video_id:videoId,status,is_featured:featured,scheduled_start_at:scheduledStartAt,scheduled_end_at:scheduledEndAt,updated_at:new Date().toISOString()};
  try{
   if(featured){const {error}=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("is_featured",true);if(error)throw error;}
+  else if(id&&bdlLiveBroadcasts.some(x=>x.id===id&&x.is_featured)){const clear=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("id",id);if(clear.error)throw clear.error;}
   const result=id?await db.from("back_deck_live_broadcasts").update(payload).eq("id",id):await db.from("back_deck_live_broadcasts").insert({...payload,created_by:user.id});
   if(result.error)throw result.error;
   msg(featured?"Broadcast saved and sent to the public player.":"Broadcast saved to your library.");
@@ -370,15 +412,26 @@ $("bdlLiveReset").onclick=bdlResetLiveForm;
 $("bdlLiveRefresh").onclick=()=>bdlLoadLiveBroadcasts().catch(e=>msg("Could not load broadcasts: "+e.message,"error"));
 $("bdlLiveRows").addEventListener("click",async e=>{
  const activate=e.target.closest("[data-bdl-live-activate]"),edit=e.target.closest("[data-bdl-live-edit]"),del=e.target.closest("[data-bdl-live-delete]");
- if(activate){const x=bdlLiveBroadcasts.find(y=>y.id===activate.dataset.bdlLiveActivate);if(!x)return;
-  try{const clear=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("is_featured",true);if(clear.error)throw clear.error;
+ if(activate){
+  const x=bdlLiveBroadcasts.find(y=>y.id===activate.dataset.bdlLiveActivate);if(!x||x.status!=="live")return;
+  try{
+   const clear=await db.from("back_deck_live_broadcasts").update({is_featured:false,updated_at:new Date().toISOString()}).eq("is_featured",true);if(clear.error)throw clear.error;
    const set=await db.from("back_deck_live_broadcasts").update({is_featured:true,status:"live",updated_at:new Date().toISOString()}).eq("id",x.id);if(set.error)throw set.error;
    msg("Broadcast is now featured on the public player.");await bdlLoadLiveBroadcasts();
-  }catch(err){msg("Could not switch the public broadcast: "+err.message,"error");}}
- if(edit){const x=bdlLiveBroadcasts.find(y=>y.id===edit.dataset.bdlLiveEdit);if(!x)return;$("bdlLiveBroadcastId").value=x.id;$("bdlLiveTitle").value=x.title;$("bdlLiveUrl").value="https://www.youtube.com/watch?v="+x.youtube_video_id;$("bdlLiveStatus").value=x.status;$("bdlLiveFeatured").checked=!!x.is_featured;$("bdlLiveTitle").scrollIntoView({behavior:"smooth",block:"center"});}
- if(del&&confirm("Delete this saved broadcast?")){const {error}=await db.from("back_deck_live_broadcasts").delete().eq("id",del.dataset.bdlLiveDelete);if(error)msg("Delete failed: "+error.message,"error");else{msg("Broadcast deleted.");await bdlLoadLiveBroadcasts();}}
+  }catch(err){msg("Could not switch the public broadcast: "+err.message,"error");}
+ }
+ if(edit){
+  const x=bdlLiveBroadcasts.find(y=>y.id===edit.dataset.bdlLiveEdit);if(!x)return;
+  $("bdlLiveBroadcastId").value=x.id;$("bdlLiveTitle").value=x.title;$("bdlLiveUrl").value="https://www.youtube.com/watch?v="+x.youtube_video_id;
+  $("bdlLiveStatus").value=x.status;$("bdlLiveFeatured").checked=!!x.is_featured;
+  $("bdlLiveStart").value=bdlIsoToPacificInput(x.scheduled_start_at);$("bdlLiveEnd").value=bdlIsoToPacificInput(x.scheduled_end_at);
+  $("bdlLiveTitle").scrollIntoView({behavior:"smooth",block:"center"});
+ }
+ if(del&&confirm("Delete this saved broadcast?")){
+  const {error}=await db.from("back_deck_live_broadcasts").delete().eq("id",del.dataset.bdlLiveDelete);
+  if(error)msg("Delete failed: "+error.message,"error");else{msg("Broadcast deleted.");await bdlLoadLiveBroadcasts();}
+ }
 });
-
 async function refreshAll(){try{await Promise.all([loadEpisodes(),loadSchedule(),loadGuests(),loadCrew(),loadTasks(),loadRundown()]);try{await bdlLoadLiveBroadcasts()}catch(liveError){$("bdlLiveCount").textContent="Database setup required";$("bdlLiveRows").innerHTML='<tr><td colspan="5" class="empty">Run supabase/live-broadcast-manager.sql in Supabase to enable saved broadcasts.</td></tr>';}calendarRender();reminderRender();crPopulate();crRender();if(notificationTimer)clearInterval(notificationTimer);notificationTimer=setInterval(reminderRender,60000);msg("Production Center is up to date.","");}catch(e){msg("Could not load all production data: "+e.message,"error");}}
 $("weeklyTemplate").onclick=async()=>{
  const template=[
